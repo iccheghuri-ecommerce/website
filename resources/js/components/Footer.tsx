@@ -1,6 +1,6 @@
+import { Link } from '@inertiajs/react';
 import { FaWhatsapp, FaFacebookF, FaInstagram } from 'react-icons/fa';
 import { HiPhone, HiMail, HiLocationMarker } from 'react-icons/hi';
-import { Link } from '@inertiajs/react';
 
 const Footer = () => {
     return (
