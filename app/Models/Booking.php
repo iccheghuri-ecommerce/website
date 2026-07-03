@@ -8,4 +8,9 @@ class Booking extends Model
 {
     //
     protected $guarded = [];
+
+    public function tour()
+    {
+        return $this->belongsTo(Tour::class);
+    }
 }

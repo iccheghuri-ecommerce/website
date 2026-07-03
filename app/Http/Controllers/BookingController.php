@@ -107,6 +107,6 @@ class BookingController extends Controller
             'note' => $data['note'],
         ]);
 
-        return redirect("/bookings/{$booking->booking_code}/pay");
+        return redirect("/bookings/{$booking->booking_code}/pay?payment={$data['payment']}");
     }
 }
