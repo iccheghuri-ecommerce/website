@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use App\Models\Booking;
 
 /**
  * @property int $id
@@ -21,7 +22,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'google_id'])]
+#[Fillable(['name', 'email', 'password', 'google_id', 'number'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -39,5 +40,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasManyThrough(
+            Payment::class,
+            Booking::class,
+            'user_id',    // Foreign key on bookings table
+            'booking_id', // Foreign key on payments table
+            'id',         // Local key on users table
+            'id'          // Local key on bookings table
+        );
     }
 }
