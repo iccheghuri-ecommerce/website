@@ -1,7 +1,12 @@
-    import { Link } from '@inertiajs/react';
+    import { Link, router } from '@inertiajs/react';
     import TourCard from '../components/TourCard';
 
     export default function Welcome({ featured }) {
+        const handleSearch = (e) => {
+            const q = e.currentTarget.previousElementSibling.value;
+
+            router.get('/tours', { q });
+        };
         return (
             <div>
                 <div className="flex flex-col gap-12 pb-16">
@@ -32,7 +37,9 @@
                                     placeholder="Where to next?"
                                     className="flex-grow bg-transparent px-4 py-2 text-white placeholder-white/70 outline-none"
                                 />
-                                <button className="rounded-md bg-orange-600 px-6 py-2 font-semibold text-white transition hover:bg-orange-700">
+                                <button className="rounded-md bg-orange-600 px-6 py-2 font-semibold text-white transition hover:bg-orange-700"
+
+                                onClick={handleSearch}>
                                     Search
                                 </button>
                             </div>
@@ -52,7 +59,7 @@
                             </div>
 
                             <Link
-                                href="/packages"
+                                href="/tours"
                                 className="group flex items-center font-semibold text-orange-600 transition hover:text-orange-700"
                             >
                                 View all tours
