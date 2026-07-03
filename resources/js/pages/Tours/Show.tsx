@@ -161,13 +161,9 @@ const Show = ({ tour }) => {
                         ) : (
                             <>
                                 <p>
-                                    Bookings close on <strong>{fmtDateTime(tour.booking_ends_at)}</strong>
+                                    Booking closes on <strong>{fmtDateTime(tour.booking_ends_at)}</strong>
                                 </p>
-                                {daysLeft <= 7 && (
-                                    <p className="mt-1 font-medium">
-                                        Only {daysLeft} day{daysLeft !== 1 ? 's' : ''} left!
-                                    </p>
-                                )}
+
                             </>
                         )}
                     </div>
