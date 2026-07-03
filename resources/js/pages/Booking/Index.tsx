@@ -97,7 +97,7 @@ const Index = ({ tour, selection, user }) => {
                                         Phone Number
                                     </label>
                                     <div className="mt-1 block w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-sm font-medium text-slate-800">
-                                        {user?.phone || '—'}
+                                        {user?.number || '—'}
                                     </div>
                                 </div>
                             </div>

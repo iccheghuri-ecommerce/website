@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import dayjs from 'dayjs';
 import {
     Copy,
@@ -12,13 +12,16 @@ import {
 } from 'lucide-react';
 
 const Index = ({ booking, payment }) => {
+    const { errors } = usePage().props;
     const total = booking.total_amount;
     const paid = booking.paid_amount;
     const due = Math.max(0, total - paid);
     const progressPercentage = Math.min((paid / total) * 100, 100);
+    const minimumBookingAmount = booking.tour.minimum_booking_amount ?? due;
+
     let initialAmount = 0;
     if (payment == 'partial') {
-        initialAmount = Math.min(due, booking.tour.minimum_booking_amount);
+        initialAmount = Math.min(due, minimumBookingAmount);
     } else {
         initialAmount = due;
     }
@@ -102,6 +105,7 @@ const Index = ({ booking, payment }) => {
         console.log(payload);
 
         router.post(`/bookings/${booking.booking_code}/pay`, payload, {
+            preserveScroll: true,
             onFinish: () => setIsSubmitting(false),
             onError: () => setIsSubmitting(false),
         });
@@ -273,7 +277,11 @@ const Index = ({ booking, payment }) => {
                                 )}
                             </div>
                         </div>
-
+                        {errors.booking && (
+                            <p className="text-sm text-red-600">
+                                {errors.booking}
+                            </p>
+                        )}
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label
@@ -294,7 +302,7 @@ const Index = ({ booking, payment }) => {
                                         id="amount"
                                         required
                                         min={Math.min(
-                                            booking.tour.minimum_booking_amount,
+                                            minimumBookingAmount,
                                             due,
                                         )}
                                         max={due}
@@ -307,14 +315,19 @@ const Index = ({ booking, payment }) => {
                                     />
                                 </div>
 
-                                {due > booking.tour.minimum_booking_amount && (
+                                {due > minimumBookingAmount && (
                                     <p className="mt-1.5 flex items-center gap-1 text-xs text-slate-400">
                                         <Info className="inline h-3.5 w-3.5 text-slate-400" />
                                         Min. payable amount is{' '}
                                         <span className="font-semibold text-slate-600">
                                             ৳
-                                            {booking.tour.minimum_booking_amount.toLocaleString()}
+                                            {minimumBookingAmount.toLocaleString()}
                                         </span>
+                                    </p>
+                                )}
+                                {errors.amount && (
+                                    <p className="text-sm text-red-600">
+                                        {errors.amount}
                                     </p>
                                 )}
                             </div>
@@ -351,6 +364,11 @@ const Index = ({ booking, payment }) => {
                                         }
                                     />
                                 </div>
+                                {errors.transaction_id && (
+                                    <p className="text-sm text-red-600">
+                                        {errors.transaction_id}
+                                    </p>
+                                )}
                             </div>
 
                             <div>

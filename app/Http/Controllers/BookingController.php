@@ -6,7 +6,6 @@ use App\Models\Booking;
 use App\Models\Tour;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -32,6 +31,14 @@ class BookingController extends Controller
 
     function store(Request $request, $slug)
     {
+        $user = Auth::user();
+
+        if (empty($user->number)) {
+            return back()->withErrors([
+                'booking' => 'Please add your phone number in profile before making a booking.',
+            ]);
+        }
+
         $tour = Tour::where('slug', $slug)->firstOrFail();
 
         if (!$tour->is_active) {
@@ -40,12 +47,15 @@ class BookingController extends Controller
             ]);
         }
         $bookedCount = $tour->booked_seats;
+        $availableSeats = $tour->total_seats - $bookedCount;
 
-        if ($bookedCount >= $tour->total_seats) {
+
+        if ($availableSeats <= 0) {
             return back()->withErrors([
                 'booking' => 'The tour is sold out',
             ]);
         }
+
 
         $data = $request->validate([
             'adults' => 'required|integer|min:0',
@@ -58,6 +68,12 @@ class BookingController extends Controller
         $adultsCount = $data['adults'];
         $couplesCount = $data['couples'];
         $childrenCount = $data['children'];
+        $requestedSeats = $adultsCount + $childrenCount + ($couplesCount * 2);
+        if ($requestedSeats > $availableSeats) {
+            return back()->withErrors([
+                'booking' => "Only {$availableSeats} seat(s) left. Please reduce your selection.",
+            ]);
+        }
 
 
 
@@ -102,7 +118,8 @@ class BookingController extends Controller
 
             'status' => 'active',
 
-            'note' => $data['note'],
+            'note' => $data['note'] ?? null,
+
         ]);
 
         return redirect("/bookings/{$booking->booking_code}/pay?payment={$data['payment']}");

@@ -30,13 +30,14 @@ class PaymentController extends Controller
         $booking = Booking::with('tour')
             ->where('booking_code', $booking_code)
             ->where('user_id', Auth::id())
-
             ->firstOrFail();
 
         $totalAmount = $booking->total_amount;
         $paidAmount = $booking->paid_amount;
         $due = $totalAmount - $paidAmount;
-        $minAllowed = min($booking->tour->minimum_booking_amount, $due);
+        $minimumBookingAmount = $booking->tour->minimum_booking_amount ?? $due;
+
+        $minAllowed = min($minimumBookingAmount, $due);
 
         $validated = $request->validate([
             'amount' => [

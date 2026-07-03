@@ -20,7 +20,7 @@ Route::middleware('auth')->group(function (){
     Route::get('/bookings/{booking_code}/pay', [PaymentController::class, 'index']);
     Route::post('/bookings/{booking_code}/pay', [PaymentController::class, 'store']);
 
-    Route::get('/profile', [UserController::class, 'index']);
+    Route::get('/profile', [UserController::class, 'index'])->name('profile');
     Route::patch('/profile', [UserController::class, 'update']);
 });
 Route::middleware('guest')->group(function () {
