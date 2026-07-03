@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class PaymentController extends Controller
@@ -14,6 +15,8 @@ class PaymentController extends Controller
     {
         $booking = Booking::with('tour')
             ->where('booking_code', $booking_code)
+            ->where('user_id', Auth::id())
+
             ->firstOrFail();
 
 
@@ -26,6 +29,8 @@ class PaymentController extends Controller
     {
         $booking = Booking::with('tour')
             ->where('booking_code', $booking_code)
+            ->where('user_id', Auth::id())
+
             ->firstOrFail();
 
         $totalAmount = $booking->total_amount;
