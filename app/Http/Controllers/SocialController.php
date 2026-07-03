@@ -35,4 +35,13 @@ class SocialController extends Controller
     {
         return Inertia::location(route('auth.google.redirect'));
     }
+
+    public function logout()
+    {
+        Auth::logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        return redirect('/');
+    }
 }

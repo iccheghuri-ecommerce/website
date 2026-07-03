@@ -22,6 +22,8 @@ Route::middleware('auth')->group(function (){
 
     Route::get('/profile', [UserController::class, 'index'])->name('profile');
     Route::patch('/profile', [UserController::class, 'update']);
+
+    Route::post('/logout', [SocialController::class, 'logout'])->name('logout');
 });
 Route::middleware('guest')->group(function () {
     Route::get('/login', [SocialController::class, 'login'])->name('login');

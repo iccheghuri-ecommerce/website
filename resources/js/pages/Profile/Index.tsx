@@ -1,6 +1,7 @@
 import React from 'react';
 import { useForm, Link } from '@inertiajs/react';
-
+import { router } from '@inertiajs/react';
+import { FiLogOut } from 'react-icons/fi';
 const Index = ({ user, bookings, payments }) => {
     // Form handling for profile update
     const { data, setData, patch, processing, errors } = useForm({
@@ -26,16 +27,32 @@ const Index = ({ user, bookings, payments }) => {
         return `px-2.5 py-0.5 inline-flex text-xs font-semibold rounded-full border ${styles[status] || 'bg-gray-100 text-gray-800 border-gray-200'}`;
     };
 
+    const handleLogout = () => {
+        if (window.confirm('Are you sure you want to logout?')) {
+            router.post('/logout');
+        }
+    };
+
     return (
         <div className="mx-auto max-w-7xl space-y-8 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
             {/* Header section */}
-            <div className="border-b border-gray-200 pb-5">
-                <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                    My Profile
-                </h1>
-                <p className="mt-1.5 text-sm text-gray-500">
-                    Manage your account, bookings, and payments.
-                </p>
+            <div className="flex items-start justify-between border-b border-gray-200 pb-5">
+                <div>
+                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                        My Profile
+                    </h1>
+                    <p className="mt-1.5 text-sm text-gray-500">
+                        Manage your account, bookings, and payments.
+                    </p>
+                </div>
+
+                <button
+                    onClick={handleLogout}
+                    className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md active:scale-95"
+                >
+                    <FiLogOut size={16} />
+                    Logout
+                </button>
             </div>
 
             {/* --- PROFILE INFORMATION --- */}
