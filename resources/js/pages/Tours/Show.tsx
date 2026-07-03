@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
+import { router } from '@inertiajs/react';
 // Expects props.tour shaped like the `tours` table:
 // { id, title, slug, short_description, description, thumbnail, is_featured,
 //   is_active, booking_ends_at, departure_at, return_at, total_seats,
@@ -97,11 +98,14 @@ const Show = ({ tour }) => {
 
     const handleBook = () => {
         setError(null);
+
         if (!canSubmit) return;
-        setSubmitting(true);
-        // Wire this up to your Inertia/axios post to the bookings endpoint.
-        // router.post(`/tours/${tour.slug}/book`, { adults, couples, children, payment, amount: payable })
-        setTimeout(() => setSubmitting(false), 800);
+        router.get(`/tours/${tour.slug}/book`, {
+            adults,
+            couples,
+            children,
+            payment,
+        });
     };
 
     return (

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialController extends Controller
@@ -28,6 +29,10 @@ class SocialController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('home');
+        return redirect()->intended(route('home'));
+    }
+    public function login()
+    {
+        return Inertia::location(route('auth.google.redirect'));
     }
 }
