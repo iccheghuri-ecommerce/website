@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Tour extends Model
 {
@@ -18,4 +19,16 @@ class Tour extends Model
     {
         return $query->where('is_active', true);
     }
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public function getBookedSeatsAttribute()
+    {
+        return $this->bookings()
+            ->where('status', 'active')
+            ->sum(DB::raw('adult_count + child_count + (couple_count * 2)'));
+    }
+    
 }

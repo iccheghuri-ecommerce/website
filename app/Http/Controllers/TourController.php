@@ -22,12 +22,14 @@ class TourController extends Controller
             'q' => $request->q,
         ]);
     }
-    function show($slug)
+    public function show($slug)
     {
         $tour = Tour::where('slug', $slug)->firstOrFail();
 
+        $tour->append('booked_seats');
+
         return Inertia::render('Tours/Show', [
-            "tour" => $tour
+            'tour' => $tour,
         ]);
     }
 }

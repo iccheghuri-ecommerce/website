@@ -1,10 +1,6 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import { router } from '@inertiajs/react';
-// Expects props.tour shaped like the `tours` table:
-// { id, title, slug, short_description, description, thumbnail, is_featured,
-//   is_active, booking_ends_at, departure_at, return_at, total_seats,
-//   adult_price, couple_price, child_price, minimum_booking_amount }
 
 const money = (n) => `৳${n.toLocaleString('en-BD')}`;
 const fmtDate = (date) => dayjs(date).format('D MMM YYYY');
@@ -66,8 +62,8 @@ const Show = ({ tour }) => {
     const hasCouple = tour.couple_price != null;
     const hasChild = tour.child_price != null;
     const hasMinBooking = tour.minimum_booking_amount != null;
-    const soldOut = tour.total_seats <= 0;
-    const seatsAvailable = tour.total_seats; // no "booked" count in schema, assume prop reflects remaining
+    const seatsAvailable = tour.total_seats - tour.booked_seats;
+    const soldOut = seatsAvailable <= 0;
 
     const totalPeople = adults + couples * 2 + children; // couple = 2 seats
     const totalPrice =
@@ -132,7 +128,7 @@ const Show = ({ tour }) => {
                         {[
                             ['Departure', fmtDate(tour.departure_at)],
                             ['Return', fmtDate(tour.return_at)],
-                            ['Seats Left', tour.total_seats],
+                            ['Seats Left', seatsAvailable],
                         ].map(([label, value]) => (
                             <div key={label} className="rounded-xl border border-slate-200 bg-white p-4 text-center">
                                 <p className="text-xs tracking-wide text-slate-400 uppercase">{label}</p>

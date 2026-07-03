@@ -1,6 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
-    FiShoppingCart as ShoppingCart,
     FiUser as User,
 } from 'react-icons/fi';
 
@@ -45,20 +44,12 @@ const NavBar = () => {
                             Sign In
                         </a>
                     ) : (
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200">
+                        <Link href="/profile" className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200">
                             <User className="h-4 w-4 text-slate-600" />
-                        </div>
+                        </Link>
                     )}
 
-                    <Link
-                        href="/cart"
-                        className="relative text-slate-700 transition-colors hover:text-primary"
-                    >
-                        <ShoppingCart className="h-6 w-6" />
-                        <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
-                            0
-                        </span>
-                    </Link>
+
                 </div>
             </div>
         </nav>

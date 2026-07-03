@@ -39,9 +39,7 @@ class BookingController extends Controller
                 'booking' => 'This tour is unavailable.',
             ]);
         }
-        $bookedCount = Booking::where('tour_id', $tour->id)
-            ->where('status', 'active')
-            ->sum(DB::raw('adult_count + child_count + (couple_count * 2)'));
+        $bookedCount = $tour->booked_seats;
 
         if ($bookedCount >= $tour->total_seats) {
             return back()->withErrors([
