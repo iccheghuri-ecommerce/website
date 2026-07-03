@@ -18,7 +18,11 @@ const Index = ({ tour, selection, user }) => {
     const hasCouple = tour.couple_price != null;
     const hasChild = tour.child_price != null;
 
-    const totalPeople = data.adults + data.couples * 2 + data.children;
+    const totalPeople =
+        Number(data.adults) + Number(data.couples) * 2 + Number(data.children);
+
+
+
     const totalPrice =
         data.adults * tour.adult_price +
         (hasCouple ? data.couples * tour.couple_price : 0) +
