@@ -38,7 +38,7 @@ const Index = ({ booking, payment }) => {
         bkash: {
             name: 'bKash',
             type: 'Send Money Personal',
-            number: '01787-654321',
+            number: '01660160911',
             placeholder: 'e.g. AM87X92KPL',
             color: 'bg-[#e2136e]',
             borderColor: 'border-[#e2136e]',
@@ -47,7 +47,7 @@ const Index = ({ booking, payment }) => {
         nagad: {
             name: 'Nagad',
             type: 'Send Money Personal',
-            number: '01987-654321',
+            number: '01660160911',
             placeholder: 'e.g. 71K8AX92P',
             color: 'bg-[#f57c20]',
             borderColor: 'border-[#f57c20]',
@@ -56,7 +56,7 @@ const Index = ({ booking, payment }) => {
         rocket: {
             name: 'Rocket',
             type: 'Send Money Personal',
-            number: '01587-654321-0',
+            number: '01660160911',
             placeholder: 'e.g. 202607031254',
             color: 'bg-[#8c3c96]',
             borderColor: 'border-[#8c3c96]',
@@ -65,8 +65,8 @@ const Index = ({ booking, payment }) => {
         bank: {
             name: 'Bank Transfer',
             type: 'NPSB / Fund Transfer',
-            number: 'City Bank | A/C: 1203948571001',
-            extra: 'Routing: 220271484',
+            number: 'Currently Unavailable',
+            extra: '-',
             placeholder: 'e.g. FT192837465',
             color: 'bg-blue-600',
             borderColor: 'border-blue-600',
@@ -77,7 +77,7 @@ const Index = ({ booking, payment }) => {
             type: 'Pay In Cash',
             number: 'Pay to our manager in person',
             extra: 'Please write the manager’s name inside the field below.',
-            placeholder: 'e.g. Rahman Ali (Manager)',
+            placeholder: 'e.g. Tamim (Manager)',
             color: 'bg-slate-700',
             borderColor: 'border-slate-700',
             textColor: 'text-slate-700',
