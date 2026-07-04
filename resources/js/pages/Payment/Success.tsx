@@ -67,10 +67,10 @@ const Success = () => {
                 </div>
 
                 <Link
-                    href="/"
+                    href="/profile"
                     className="w-full transform rounded-xl bg-slate-900 px-4 py-3 font-medium text-white shadow-lg shadow-slate-900/10 transition duration-200 ease-in-out hover:bg-slate-800 active:scale-[0.98]"
                 >
-                    Back to Home
+                    Back to Profile
                 </Link>
             </div>
         </div>

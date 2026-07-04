@@ -33,12 +33,6 @@ class BookingController extends Controller
     {
         $user = Auth::user();
 
-        if (empty($user->number)) {
-            return back()->withErrors([
-                'booking' => 'Please add your phone number in profile before making a booking.',
-            ]);
-        }
-
         $tour = Tour::where('slug', $slug)->firstOrFail();
 
         if (!$tour->is_active) {
@@ -63,6 +57,9 @@ class BookingController extends Controller
             'children' => 'required|integer|min:0',
             'payment' => 'required|in:full,partial',
             'note' => 'nullable|string|max:1000',
+            'number' => ['required', 'digits:11'],
+            'name' => ['required', 'string', 'max:255'],
+
         ]);
 
         $adultsCount = $data['adults'];
@@ -121,6 +118,12 @@ class BookingController extends Controller
             'note' => $data['note'] ?? null,
 
         ]);
+
+        $user->update([
+            'number' => $data['number'],
+            'name' => $data['name'],
+        ]);
+
 
         return redirect("/bookings/{$booking->booking_code}/pay?payment={$data['payment']}");
     }

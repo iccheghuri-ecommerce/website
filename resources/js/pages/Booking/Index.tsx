@@ -13,6 +13,8 @@ const Index = ({ tour, selection, user }) => {
         couples: selection.couples ?? 0,
         children: selection.children ?? 0,
         payment: selection.payment ?? 'full',
+        number: user?.number ?? '',
+        name: user?.name ?? '',
     });
 
     const hasCouple = tour.couple_price != null;
@@ -20,8 +22,6 @@ const Index = ({ tour, selection, user }) => {
 
     const totalPeople =
         Number(data.adults) + Number(data.couples) * 2 + Number(data.children);
-
-
 
     const totalPrice =
         data.adults * tour.adult_price +
@@ -63,18 +63,8 @@ const Index = ({ tour, selection, user }) => {
                         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                                 <h2 className="text-lg font-semibold text-slate-800">
-                                    Traveler Information
+                                    Billing Information
                                 </h2>
-                                <p className="text-xs text-slate-500">
-                                    Need updates? Visit your{' '}
-                                    <Link
-                                        href="/profile"
-                                        className="font-medium text-teal-600 hover:underline"
-                                    >
-                                        profile page
-                                    </Link>
-                                    .
-                                </p>
                             </div>
 
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -82,9 +72,22 @@ const Index = ({ tour, selection, user }) => {
                                     <label className="block text-sm font-medium text-slate-500">
                                         Full Name
                                     </label>
-                                    <div className="mt-1 block w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-sm font-medium text-slate-800">
-                                        {user?.name || '—'}
-                                    </div>
+
+                                    <input
+                                        type="text"
+                                        value={data.name}
+                                        onChange={(e) =>
+                                            setData('name', e.target.value)
+                                        }
+                                        className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 transition focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none"
+                                        placeholder="Enter your full name"
+                                    />
+
+                                    {errors.name && (
+                                        <p className="mt-1 text-xs text-red-600">
+                                            {errors.name}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div>
@@ -100,8 +103,33 @@ const Index = ({ tour, selection, user }) => {
                                     <label className="block text-sm font-medium text-slate-500">
                                         Phone Number
                                     </label>
-                                    <div className="mt-1 block w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2 text-sm font-medium text-slate-800">
-                                        {user?.number || '—'}
+
+                                    <input
+                                        type="tel"
+                                        inputMode="numeric"
+                                        maxLength={11}
+                                        value={data.number}
+                                        onChange={(e) =>
+                                            setData('number', e.target.value)
+                                        }
+                                        className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 transition focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none"
+                                        placeholder="Enter your phone number"
+                                    />
+
+                                    {errors.number && (
+                                        <p className="mt-1 text-xs text-red-600">
+                                            {errors.number}
+                                        </p>
+                                    )}
+                                </div>
+                                <div className="sm:col-span-2">
+                                    <div className="flex items-start gap-2 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2">
+                                        <span className="mt-0.5">💡</span>
+                                        <p className="text-sm text-teal-800">
+                                            Changes to your name and phone
+                                            number will also be saved to your
+                                            profile.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
