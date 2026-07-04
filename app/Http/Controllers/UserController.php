@@ -39,7 +39,7 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'number' => ['required', 'string', 'max:20']
+            'number' => ['required', 'digits:11'],
         ]);
 
         $user->update($validated);
