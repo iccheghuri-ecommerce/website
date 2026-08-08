@@ -32,7 +32,6 @@ return new class extends Migration
                 'completed',
             ])->default('active');
 
-
             $table->text('admin_note')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
