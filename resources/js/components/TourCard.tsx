@@ -1,7 +1,7 @@
-import React from 'react';
 import { Link } from '@inertiajs/react';
+import React from 'react';
 
-const TourCard = ({ tour }) => {
+const TourCard = ({ tour }: { tour: any }) => {
     return (
         <div className="group overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
             <div className="overflow-hidden">
