@@ -11,7 +11,7 @@ use Inertia\Inertia;
 class PaymentController extends Controller
 {
     //
-    function index(Request $request, $booking_code)
+    public function index(Request $request, $booking_code)
     {
         $booking = Booking::with('tour')
             ->where('booking_code', $booking_code)
@@ -19,13 +19,13 @@ class PaymentController extends Controller
 
             ->firstOrFail();
 
-
         return Inertia::render('Payment/Index', [
             'booking' => $booking,
-            'payment' => $request->payment
+            'payment' => $request->payment,
         ]);
     }
-    function store(Request $request, $booking_code)
+
+    public function store(Request $request, $booking_code)
     {
         $booking = Booking::with('tour')
             ->where('booking_code', $booking_code)
