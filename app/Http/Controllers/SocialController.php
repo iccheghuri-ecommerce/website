@@ -31,6 +31,7 @@ class SocialController extends Controller
 
         return redirect()->intended(route('home'));
     }
+
     public function login()
     {
         return Inertia::location(route('auth.google.redirect'));
