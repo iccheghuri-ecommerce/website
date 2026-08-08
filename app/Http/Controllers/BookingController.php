@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Tour;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -120,23 +121,43 @@ class BookingController extends Controller
             $adultsCount * $tour->adult_price +
             $couplesCount * $tour->couple_price;
 
-        $booking = Booking::create([
-            'tour_id' => $tour->id,
-            'user_id' => Auth::id(),
-            'booking_code' => strtoupper(Str::random(10)),
+        try {
+            $booking = DB::transaction(function () use ($tour, $data, $adultsCount, $couplesCount, $totalAmount) {
+                $occupiedSeats = Booking::where('tour_id', $tour->id)
+                    ->where('status', 'active')
+                    ->lockForUpdate()
+                    ->pluck('seats')
+                    ->filter()
+                    ->flatten()
+                    ->toArray();
 
-            'adult_count' => $adultsCount,
-            'couple_count' => $couplesCount,
-            'seats' => $data['seats'],
+                $alreadyTaken = array_intersect($data['seats'], $occupiedSeats);
+                if (! empty($alreadyTaken)) {
+                    throw new \Exception('Some selected seats were already booked while you were checking out: '.implode(', ', $alreadyTaken));
+                }
 
-            'total_amount' => $totalAmount,
-            'paid_amount' => 0,
+                return Booking::create([
+                    'tour_id' => $tour->id,
+                    'user_id' => Auth::id(),
+                    'booking_code' => strtoupper(Str::random(10)),
 
-            'status' => 'active',
+                    'adult_count' => $adultsCount,
+                    'couple_count' => $couplesCount,
+                    'seats' => $data['seats'],
 
-            'note' => $data['note'] ?? null,
+                    'total_amount' => $totalAmount,
+                    'paid_amount' => 0,
 
-        ]);
+                    'status' => 'active',
+
+                    'note' => $data['note'] ?? null,
+                ]);
+            });
+        } catch (\Exception $e) {
+            return back()->withErrors([
+                'booking' => $e->getMessage(),
+            ]);
+        }
 
         $user->update([
             'number' => $data['number'],
