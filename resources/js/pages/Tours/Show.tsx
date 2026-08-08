@@ -1,17 +1,34 @@
-import { useState } from 'react';
-import dayjs from 'dayjs';
 import { router } from '@inertiajs/react';
+import dayjs from 'dayjs';
+import { useState } from 'react';
 
-const money = (n) => `৳${n.toLocaleString('en-BD')}`;
-const fmtDate = (date) => dayjs(date).format('D MMM YYYY');
-const fmtDateTime = (date) => dayjs(date).format('D MMM YYYY, h:mm A');
+const money = (n: number) => `৳${n.toLocaleString('en-BD')}`;
+const fmtDate = (date: string) => dayjs(date).format('D MMM YYYY');
+const fmtDateTime = (date: string) => dayjs(date).format('D MMM YYYY, h:mm A');
 
-const Counter = ({ label, sub, price, value, onChange, min = 0, max = 20 }) => (
+const Counter = ({
+    label,
+    sub,
+    price,
+    value,
+    onChange,
+    min = 0,
+    max = 20,
+}: {
+    label: string;
+    sub?: string;
+    price: number;
+    value: number;
+    onChange: (val: number) => void;
+    min?: number;
+    max?: number;
+}) => (
     <div className="flex items-center justify-between py-3">
         <div>
             <p className="font-medium text-slate-800">{label}</p>
             <p className="text-sm text-slate-500">
-                {money(price)} {sub && <span className="text-slate-400">· {sub}</span>}
+                {money(price)}{' '}
+                {sub && <span className="text-slate-400">· {sub}</span>}
             </p>
         </div>
         <div className="flex items-center gap-3">
@@ -23,7 +40,9 @@ const Counter = ({ label, sub, price, value, onChange, min = 0, max = 20 }) => (
             >
                 −
             </button>
-            <span className="w-6 text-center font-semibold text-slate-800">{value}</span>
+            <span className="w-6 text-center font-semibold text-slate-800">
+                {value}
+            </span>
             <button
                 type="button"
                 onClick={() => onChange(Math.min(max, value + 1))}
@@ -36,19 +55,17 @@ const Counter = ({ label, sub, price, value, onChange, min = 0, max = 20 }) => (
     </div>
 );
 
-const toggleClass = (active) =>
+const toggleClass = (active: boolean) =>
     `rounded-lg border px-3 py-2 text-sm font-medium transition ${
         active
             ? 'border-teal-600 bg-teal-50 text-teal-700'
             : 'border-slate-200 text-slate-600 hover:border-slate-300'
     }`;
 
-const Show = ({ tour }) => {
+const Show = ({ tour }: { tour: any }) => {
     const [adults, setAdults] = useState(1);
     const [couples, setCouples] = useState(0);
-    const [children, setChildren] = useState(0);
     const [payment, setPayment] = useState('full'); // "full" | "partial"
-    const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
 
     if (!tour) {
@@ -60,26 +77,30 @@ const Show = ({ tour }) => {
     }
 
     const hasCouple = tour.couple_price != null;
-    const hasChild = tour.child_price != null;
     const hasMinBooking = tour.minimum_booking_amount != null;
     const seatsAvailable = tour.total_seats - tour.booked_seats;
     const soldOut = seatsAvailable <= 0;
 
-    const totalPeople = adults + couples * 2 + children; // couple = 2 seats
+    const totalPeople = adults + couples * 2; // couple = 2 seats
     const totalPrice =
         adults * tour.adult_price +
-        (hasCouple ? couples * tour.couple_price : 0) +
-        (hasChild ? children * tour.child_price : 0);
+        (hasCouple ? couples * tour.couple_price : 0);
 
     const bookingClosed = dayjs().isAfter(tour.booking_ends_at);
     const exceedsSeats = totalPeople > seatsAvailable;
-    const daysLeft = Math.max(dayjs(tour.booking_ends_at).diff(dayjs(), 'day'), 0);
+    const daysLeft = Math.max(
+        dayjs(tour.booking_ends_at).diff(dayjs(), 'day'),
+        0,
+    );
 
     const payable =
-        payment === 'full' ? totalPrice : Math.min(tour.minimum_booking_amount ?? totalPrice, totalPrice);
+        payment === 'full'
+            ? totalPrice
+            : Math.min(tour.minimum_booking_amount ?? totalPrice, totalPrice);
     const dueLater = totalPrice - payable;
 
-    const canSubmit = !bookingClosed && tour.is_active && totalPeople > 0 && !exceedsSeats;
+    const canSubmit =
+        !bookingClosed && tour.is_active && totalPeople > 0 && !exceedsSeats;
 
     // Single place that decides what the confirm button says / does
     const buttonLabel = !tour.is_active
@@ -88,18 +109,18 @@ const Show = ({ tour }) => {
           ? 'Sold out'
           : bookingClosed
             ? 'Booking closed'
-            : submitting
-              ? 'Booking...'
-              : `Confirm booking — ${money(payable)}`;
+            : `Confirm booking — ${money(payable)}`;
 
     const handleBook = () => {
         setError(null);
 
-        if (!canSubmit) return;
+        if (!canSubmit) {
+            return;
+        }
+
         router.get(`/tours/${tour.slug}/book`, {
             adults,
             couples,
-            children,
             payment,
         });
     };
@@ -108,7 +129,11 @@ const Show = ({ tour }) => {
         <div className="min-h-screen bg-slate-50">
             {/* Hero */}
             <div className="relative h-[46vh] min-h-[340px] w-full overflow-hidden">
-                <img src={tour.thumbnail} alt={tour.title} className="absolute inset-0 h-full w-full object-cover" />
+                <img
+                    src={tour.thumbnail}
+                    alt={tour.title}
+                    className="absolute inset-0 h-full w-full object-cover"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/85 via-slate-900/30 to-slate-900/10" />
                 <div className="relative mx-auto flex h-full max-w-6xl flex-col justify-end px-4 pb-8 sm:px-6">
                     {tour.is_featured && (
@@ -116,8 +141,12 @@ const Show = ({ tour }) => {
                             Featured
                         </span>
                     )}
-                    <h1 className="max-w-2xl text-3xl leading-tight font-bold text-white sm:text-4xl">{tour.title}</h1>
-                    <p className="mt-2 max-w-xl text-slate-200">{tour.short_description}</p>
+                    <h1 className="max-w-2xl text-3xl leading-tight font-bold text-white sm:text-4xl">
+                        {tour.title}
+                    </h1>
+                    <p className="mt-2 max-w-xl text-slate-200">
+                        {tour.short_description}
+                    </p>
                 </div>
             </div>
 
@@ -130,16 +159,27 @@ const Show = ({ tour }) => {
                             ['Return', fmtDate(tour.return_at)],
                             ['Seats Left', seatsAvailable],
                         ].map(([label, value]) => (
-                            <div key={label} className="rounded-xl border border-slate-200 bg-white p-4 text-center">
-                                <p className="text-xs tracking-wide text-slate-400 uppercase">{label}</p>
-                                <p className="mt-1 font-semibold text-slate-800">{value}</p>
+                            <div
+                                key={label}
+                                className="rounded-xl border border-slate-200 bg-white p-4 text-center"
+                            >
+                                <p className="text-xs tracking-wide text-slate-400 uppercase">
+                                    {label}
+                                </p>
+                                <p className="mt-1 font-semibold text-slate-800">
+                                    {value}
+                                </p>
                             </div>
                         ))}
                     </div>
 
                     <div>
-                        <h2 className="mb-3 text-xl font-semibold text-slate-800">About this tour</h2>
-                        <div className="prose prose-slate max-w-none whitespace-pre-line">{tour.description}</div>
+                        <h2 className="mb-3 text-xl font-semibold text-slate-800">
+                            About this tour
+                        </h2>
+                        <div className="prose prose-slate max-w-none whitespace-pre-line">
+                            {tour.description}
+                        </div>
                     </div>
 
                     <div
@@ -153,17 +193,25 @@ const Show = ({ tour }) => {
                     >
                         {bookingClosed ? (
                             <>
-                                <p className="font-semibold">🚫 Booking Closed</p>
+                                <p className="font-semibold">
+                                    🚫 Booking Closed
+                                </p>
                                 <p className="mt-1">
-                                    Online booking ended on <strong>{fmtDateTime(tour.booking_ends_at)}</strong>.
+                                    Online booking ended on{' '}
+                                    <strong>
+                                        {fmtDateTime(tour.booking_ends_at)}
+                                    </strong>
+                                    .
                                 </p>
                             </>
                         ) : (
                             <>
                                 <p>
-                                    Booking closes on <strong>{fmtDateTime(tour.booking_ends_at)}</strong>
+                                    Booking closes on{' '}
+                                    <strong>
+                                        {fmtDateTime(tour.booking_ends_at)}
+                                    </strong>
                                 </p>
-
                             </>
                         )}
                     </div>
@@ -172,8 +220,12 @@ const Show = ({ tour }) => {
                 {/* Right: booking widget */}
                 <div className="lg:col-span-1">
                     <div className="sticky top-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                        <h3 className="mb-1 text-lg font-semibold text-slate-800">Book this tour</h3>
-                        <p className="mb-4 text-sm text-slate-500">Starting from {money(tour.adult_price)} / adult</p>
+                        <h3 className="mb-1 text-lg font-semibold text-slate-800">
+                            Book this tour
+                        </h3>
+                        <p className="mb-4 text-sm text-slate-500">
+                            Starting from {money(tour.adult_price)} / adult
+                        </p>
 
                         <div className="divide-y divide-slate-100">
                             <Counter
@@ -182,6 +234,7 @@ const Show = ({ tour }) => {
                                 value={adults}
                                 onChange={setAdults}
                                 max={seatsAvailable}
+                                sub=""
                             />
                             {hasCouple && (
                                 <Counter
@@ -193,27 +246,26 @@ const Show = ({ tour }) => {
                                     max={Math.floor(seatsAvailable / 2)}
                                 />
                             )}
-                            {hasChild && (
-                                <Counter
-                                    label="Child"
-                                    price={tour.child_price}
-                                    value={children}
-                                    onChange={setChildren}
-                                    max={seatsAvailable}
-                                />
-                            )}
                         </div>
 
                         {exceedsSeats && (
                             <p className="mt-2 text-sm text-red-600">
-                                Only {seatsAvailable} seat{seatsAvailable !== 1 ? 's' : ''} left — reduce your selection.
+                                Only {seatsAvailable} seat
+                                {seatsAvailable !== 1 ? 's' : ''} left — reduce
+                                your selection.
                             </p>
                         )}
 
                         <div className="mt-4 border-t border-slate-200 pt-4">
-                            <p className="mb-2 text-sm font-medium text-slate-700">Payment</p>
+                            <p className="mb-2 text-sm font-medium text-slate-700">
+                                Payment
+                            </p>
                             <div className="grid grid-cols-2 gap-2">
-                                <button type="button" onClick={() => setPayment('full')} className={toggleClass(payment === 'full')}>
+                                <button
+                                    type="button"
+                                    onClick={() => setPayment('full')}
+                                    className={toggleClass(payment === 'full')}
+                                >
                                     Pay full
                                 </button>
                                 <button
@@ -226,7 +278,10 @@ const Show = ({ tour }) => {
                                 </button>
                             </div>
                             {!hasMinBooking && (
-                                <p className="mt-1 text-xs text-slate-400">Partial payment isn't available for this tour.</p>
+                                <p className="mt-1 text-xs text-slate-400">
+                                    Partial payment isn't available for this
+                                    tour.
+                                </p>
                             )}
                         </div>
 
@@ -251,12 +306,14 @@ const Show = ({ tour }) => {
                             </div>
                         </div>
 
-                        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+                        {error && (
+                            <p className="mt-3 text-sm text-red-600">{error}</p>
+                        )}
 
                         <button
                             type="button"
                             onClick={handleBook}
-                            disabled={!canSubmit || submitting}
+                            disabled={!canSubmit}
                             className="mt-5 w-full rounded-lg bg-teal-600 py-3 font-semibold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                         >
                             {buttonLabel}
