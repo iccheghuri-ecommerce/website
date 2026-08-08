@@ -14,7 +14,7 @@ class TourController extends Controller
         $tours = Tour::active();
 
         if ($request->filled('q')) {
-            $tours->where('title', 'like', '%' . $request->q . '%');
+            $tours->where('title', 'like', '%'.$request->q.'%');
         }
 
         return Inertia::render('Tours/Index', [
@@ -22,6 +22,7 @@ class TourController extends Controller
             'q' => $request->q,
         ]);
     }
+
     public function show($slug)
     {
         $tour = Tour::where('slug', $slug)->firstOrFail();
