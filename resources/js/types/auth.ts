@@ -3,6 +3,8 @@ export type User = {
     name: string;
     email: string;
     avatar?: string;
+    is_admin?: boolean;
+    number?: string;
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
