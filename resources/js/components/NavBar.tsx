@@ -1,10 +1,10 @@
-import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 import { FiUser as User, FiMenu, FiX } from 'react-icons/fi';
 
 const NavBar = () => {
     const { props } = usePage();
-    const user = props.auth?.user;
+    const user = props.auth?.user as any;
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleMenu = () => setIsOpen(!isOpen);
@@ -34,6 +34,34 @@ const NavBar = () => {
                     >
                         Packages
                     </Link>
+                    {user?.is_admin && (
+                        <>
+                            <Link
+                                href="/admin/tours"
+                                className="transition-colors hover:text-primary"
+                            >
+                                Admin Tours
+                            </Link>
+                            <Link
+                                href="/admin/bookings"
+                                className="transition-colors hover:text-primary"
+                            >
+                                Admin Bookings
+                            </Link>
+                            <Link
+                                href="/admin/payments"
+                                className="transition-colors hover:text-primary"
+                            >
+                                Admin Payments
+                            </Link>
+                            <Link
+                                href="/admin/users"
+                                className="transition-colors hover:text-primary"
+                            >
+                                Admin Users
+                            </Link>
+                        </>
+                    )}
                 </div>
 
                 {/* Desktop Action Button / Profile */}
@@ -89,6 +117,38 @@ const NavBar = () => {
                         >
                             Packages
                         </Link>
+                        {user?.is_admin && (
+                            <>
+                                <Link
+                                    href="/admin/tours"
+                                    onClick={() => setIsOpen(false)}
+                                    className="rounded-md px-3 py-2 transition-colors hover:bg-slate-50 hover:text-primary"
+                                >
+                                    Admin Tours
+                                </Link>
+                                <Link
+                                    href="/admin/bookings"
+                                    onClick={() => setIsOpen(false)}
+                                    className="rounded-md px-3 py-2 transition-colors hover:bg-slate-50 hover:text-primary"
+                                >
+                                    Admin Bookings
+                                </Link>
+                                <Link
+                                    href="/admin/payments"
+                                    onClick={() => setIsOpen(false)}
+                                    className="rounded-md px-3 py-2 transition-colors hover:bg-slate-50 hover:text-primary"
+                                >
+                                    Admin Payments
+                                </Link>
+                                <Link
+                                    href="/admin/users"
+                                    onClick={() => setIsOpen(false)}
+                                    className="rounded-md px-3 py-2 transition-colors hover:bg-slate-50 hover:text-primary"
+                                >
+                                    Admin Users
+                                </Link>
+                            </>
+                        )}
 
                         <hr className="my-1 border-slate-100" />
 
