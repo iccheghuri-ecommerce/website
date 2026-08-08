@@ -13,21 +13,20 @@ return new class extends Migration
     {
         Schema::create('tours', function (Blueprint $table) {
             $table->id();
-            $table->string("title");
-            $table->string("slug");
+            $table->string('title');
+            $table->string('slug');
 
-            $table->text("short_description");
-            $table->longText("description");
+            $table->text('short_description');
+            $table->longText('description');
 
-            $table->string("thumbnail");
+            $table->string('thumbnail');
 
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_active')->default(true);
 
-
-            $table->datetime("booking_ends_at");
-            $table->datetime("departure_at");
-            $table->datetime("return_at");
+            $table->datetime('booking_ends_at');
+            $table->datetime('departure_at');
+            $table->datetime('return_at');
 
             $table->unsignedSmallInteger('total_seats');
 
