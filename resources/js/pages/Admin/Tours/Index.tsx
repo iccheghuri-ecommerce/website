@@ -128,7 +128,7 @@ const Index = ({ tours, stats }: { tours: any; stats: any }) => {
                             {tours.data.map((tour: any) => {
                                 const filledSeats =
                                     tour.booked_seats_count || 0;
-                                const totalSeats = 40;
+                                const totalSeats = 45;
                                 const occupancyRate = Math.round(
                                     (filledSeats / totalSeats) * 100,
                                 );
