@@ -5,12 +5,36 @@ namespace App\Models;
 use Database\Factories\TourFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Tour extends Model
 {
     /** @use HasFactory<TourFactory> */
     use HasFactory;
+
+    protected $guarded = [];
+
+    /**
+     * @var int
+     */
+    public $booked_seats_count;
+
+    /**
+     * @var int
+     */
+    public $total_revenue;
+
+    protected $appends = ['booked_seats_count', 'total_revenue'];
+
+    public function getBookedSeatsCountAttribute()
+    {
+        return $this->booked_seats;
+    }
+
+    public function getTotalRevenueAttribute()
+    {
+        return $this->bookings()->where('status', 'active')->sum('paid_amount');
+    }
 
     public function scopeFeatured($query)
     {
@@ -22,6 +46,9 @@ class Tour extends Model
         return $query->where('is_active', true);
     }
 
+    /**
+     * @return HasMany<Booking, $this>
+     */
     public function bookings()
     {
         return $this->hasMany(Booking::class);
@@ -31,6 +58,9 @@ class Tour extends Model
     {
         return $this->bookings()
             ->where('status', 'active')
-            ->sum(DB::raw('adult_count + (couple_count * 2)'));
+            ->get()
+            ->sum(function ($booking) {
+                return count($booking->seats ?? []);
+            });
     }
 }
