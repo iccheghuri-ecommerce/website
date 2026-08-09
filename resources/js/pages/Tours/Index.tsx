@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { router } from '@inertiajs/react';
+import { useState } from 'react';
 import { FiSearch } from 'react-icons/fi';
 import TourCard from '@/components/TourCard';
 
-const Index = ({ tours, q }) => {
+const Index = ({ tours, q }: { tours: any; q: string }) => {
     const [search, setSearch] = useState(q || '');
 
     const handleSearch = () => {
@@ -35,7 +35,9 @@ const Index = ({ tours, q }) => {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         onKeyDown={(e) => {
-                            if (e.key === 'Enter') handleSearch();
+                            if (e.key === 'Enter') {
+                                handleSearch();
+                            }
                         }}
                         placeholder="Search destinations..."
                         className="w-full rounded-l-md border border-r-0 border-neutral-200 px-4 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-neutral-400 focus:outline-none"
@@ -52,7 +54,7 @@ const Index = ({ tours, q }) => {
             </div>
 
             <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {tours.data.map((tour) => (
+                {tours.data.map((tour: any) => (
                     <TourCard key={tour.id} tour={tour} />
                 ))}
             </div>

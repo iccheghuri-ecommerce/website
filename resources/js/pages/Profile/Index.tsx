@@ -1,22 +1,30 @@
-import React from 'react';
 import { useForm, Link } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
+import React from 'react';
 import { FiLogOut } from 'react-icons/fi';
-const Index = ({ user, bookings, payments }) => {
+const Index = ({
+    user,
+    bookings,
+    payments,
+}: {
+    user: any;
+    bookings: any;
+    payments: any;
+}) => {
     // Form handling for profile update
     const { data, setData, patch, processing, errors } = useForm({
         name: user.name || '',
         number: user.number || '',
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         patch('/profile');
     };
 
     // Helper status badge styles
-    const getStatusBadge = (status) => {
-        const styles = {
+    const getStatusBadge = (status: string) => {
+        const styles: Record<string, string> = {
             active: 'bg-green-100 text-green-800 border-green-200',
             completed: 'bg-blue-100 text-blue-800 border-blue-200',
             cancelled: 'bg-red-100 text-red-800 border-red-200',
@@ -24,6 +32,7 @@ const Index = ({ user, bookings, payments }) => {
             verified: 'bg-green-100 text-green-800 border-green-200',
             rejected: 'bg-rose-100 text-rose-800 border-rose-200',
         };
+
         return `px-2.5 py-0.5 inline-flex text-xs font-semibold rounded-full border ${styles[status] || 'bg-gray-100 text-gray-800 border-gray-200'}`;
     };
 
@@ -155,9 +164,10 @@ const Index = ({ user, bookings, payments }) => {
                             You haven't booked any tours yet.
                         </div>
                     ) : (
-                        bookings.map((booking) => {
+                        bookings.map((booking: any) => {
                             const remainingAmount =
                                 booking.total_amount - booking.paid_amount;
+
                             return (
                                 <div key={booking.id} className="space-y-3 p-4">
                                     <div className="flex items-center justify-between">
@@ -178,10 +188,7 @@ const Index = ({ user, bookings, payments }) => {
                                                 'Tour Details'}
                                         </p>
                                         <div className="mt-1 space-y-0.5 text-xs text-gray-500">
-                                            <p>
-                                                Adults: {booking.adult_count} |
-                                                Children: {booking.child_count}
-                                            </p>
+                                            <p>Adults: {booking.adult_count}</p>
                                             <p className="text-gray-400">
                                                 Couples: {booking.couple_count}
                                             </p>
@@ -209,7 +216,8 @@ const Index = ({ user, bookings, payments }) => {
                                                     href={`/bookings/${booking.booking_code}/pay`}
                                                     className="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700"
                                                 >
-                                                    Pay Rest (৳{remainingAmount}
+                                                    Pay Rest (৳
+                                                    {remainingAmount.toLocaleString()}
                                                     )
                                                 </Link>
                                             ) : (
@@ -251,17 +259,18 @@ const Index = ({ user, bookings, payments }) => {
                             {bookings.length === 0 ? (
                                 <tr>
                                     <td
-                                        colSpan="5"
+                                        colSpan={5}
                                         className="px-6 py-4 text-center text-sm text-gray-500"
                                     >
                                         You haven't booked any tours yet.
                                     </td>
                                 </tr>
                             ) : (
-                                bookings.map((booking) => {
+                                bookings.map((booking: any) => {
                                     const remainingAmount =
                                         booking.total_amount -
                                         booking.paid_amount;
+
                                     return (
                                         <tr
                                             key={booking.id}
@@ -279,9 +288,7 @@ const Index = ({ user, bookings, payments }) => {
                                             <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
                                                 <div className="font-medium text-gray-700">
                                                     Adults:{' '}
-                                                    {booking.adult_count} |
-                                                    Children:{' '}
-                                                    {booking.child_count}
+                                                    {booking.adult_count}
                                                 </div>
                                                 <div className="mt-0.5 text-xs text-gray-400">
                                                     Couples:{' '}
@@ -315,7 +322,8 @@ const Index = ({ user, bookings, payments }) => {
                                                         className="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700"
                                                     >
                                                         Pay Rest (৳
-                                                        {remainingAmount})
+                                                        {remainingAmount.toLocaleString()}
+                                                        )
                                                     </Link>
                                                 ) : (
                                                     <span className="text-xs text-gray-400 italic">
@@ -350,7 +358,7 @@ const Index = ({ user, bookings, payments }) => {
                             No payment logs found.
                         </div>
                     ) : (
-                        payments.map((payment) => (
+                        payments.map((payment: any) => (
                             <div key={payment.id} className="space-y-2 p-4">
                                 <div className="flex items-center justify-between">
                                     <span className="font-mono text-sm font-bold text-gray-900">
@@ -378,7 +386,7 @@ const Index = ({ user, bookings, payments }) => {
                                     </div>
                                     <div className="text-right">
                                         <p className="text-sm font-bold text-gray-900">
-                                            ৳{payment.amount}
+                                            ৳{payment.amount.toLocaleString()}
                                         </p>
                                     </div>
                                 </div>
@@ -413,14 +421,14 @@ const Index = ({ user, bookings, payments }) => {
                             {payments.length === 0 ? (
                                 <tr>
                                     <td
-                                        colSpan="5"
+                                        colSpan={5}
                                         className="px-6 py-4 text-center text-sm text-gray-500"
                                     >
                                         No payment logs found.
                                     </td>
                                 </tr>
                             ) : (
-                                payments.map((payment) => (
+                                payments.map((payment: any) => (
                                     <tr
                                         key={payment.id}
                                         className="transition-colors hover:bg-gray-50/50"
@@ -435,7 +443,7 @@ const Index = ({ user, bookings, payments }) => {
                                             {payment.method}
                                         </td>
                                         <td className="px-6 py-4 text-sm font-bold whitespace-nowrap text-gray-900">
-                                            ৳{payment.amount}
+                                            ৳{payment.amount.toLocaleString()}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span

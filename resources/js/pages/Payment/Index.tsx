@@ -1,18 +1,10 @@
-import React, { useState } from 'react';
 import { router, usePage } from '@inertiajs/react';
 import dayjs from 'dayjs';
-import {
-    Copy,
-    Check,
-    Info,
-    Calendar,
-    Users,
-    Wallet,
-    ArrowRight,
-} from 'lucide-react';
+import { Copy, Check, Info, Calendar, Wallet, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
 
-const Index = ({ booking, payment }) => {
-    const { errors } = usePage().props;
+const Index = ({ booking, payment }: { booking: any; payment: string }) => {
+    const { errors } = usePage().props as any;
     const total = booking.total_amount;
     const paid = booking.paid_amount;
     const due = Math.max(0, total - paid);
@@ -20,6 +12,7 @@ const Index = ({ booking, payment }) => {
     const minimumBookingAmount = booking.tour.minimum_booking_amount ?? due;
 
     let initialAmount = 0;
+
     if (payment == 'partial') {
         initialAmount = Math.min(due, minimumBookingAmount);
     } else {
@@ -28,7 +21,7 @@ const Index = ({ booking, payment }) => {
 
     // Form State
     const [method, setMethod] = useState('bkash');
-    const [amount, setAmount] = useState(initialAmount);
+    const [amount, setAmount] = useState<number>(initialAmount);
     const [transactionId, setTransactionId] = useState('');
     const [note, setNote] = useState('');
     const [copied, setCopied] = useState(false);
@@ -84,13 +77,13 @@ const Index = ({ booking, payment }) => {
         },
     };
 
-    const handleCopy = (text) => {
+    const handleCopy = (text: string) => {
         navigator.clipboard.writeText(text);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
 
@@ -191,6 +184,7 @@ const Index = ({ booking, payment }) => {
                                 {Object.entries(paymentMethods).map(
                                     ([key, item]) => {
                                         const isSelected = method === key;
+
                                         return (
                                             <button
                                                 key={key}
@@ -236,14 +230,17 @@ const Index = ({ booking, payment }) => {
                             <div className="flex items-start justify-between gap-2">
                                 <div>
                                     <p className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">
-                                        {paymentMethods[method].type}
+                                        {(paymentMethods as any)[method].type}
                                     </p>
                                     <p className="mt-0.5 text-base font-bold break-all text-slate-800 select-all">
-                                        {paymentMethods[method].number}
+                                        {(paymentMethods as any)[method].number}
                                     </p>
-                                    {paymentMethods[method].extra && (
+                                    {(paymentMethods as any)[method].extra && (
                                         <p className="mt-0.5 text-xs font-medium text-slate-500">
-                                            {paymentMethods[method].extra}
+                                            {
+                                                (paymentMethods as any)[method]
+                                                    .extra
+                                            }
                                         </p>
                                     )}
                                 </div>
@@ -253,7 +250,8 @@ const Index = ({ booking, payment }) => {
                                         type="button"
                                         onClick={() =>
                                             handleCopy(
-                                                paymentMethods[method].number,
+                                                (paymentMethods as any)[method]
+                                                    .number,
                                             )
                                         }
                                         className={`flex shrink-0 items-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition-all ${
@@ -308,7 +306,9 @@ const Index = ({ booking, payment }) => {
                                         max={due}
                                         value={amount}
                                         onChange={(e) =>
-                                            setAmount(e.target.value)
+                                            setAmount(
+                                                parseInt(e.target.value) || 0,
+                                            )
                                         }
                                         className="block w-full rounded-xl border border-slate-200 bg-white py-3 pr-4 pl-8 text-base font-bold text-slate-900 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-slate-900"
                                         placeholder="Enter payment amount"
@@ -360,7 +360,8 @@ const Index = ({ booking, payment }) => {
                                                 : ''
                                         }`}
                                         placeholder={
-                                            paymentMethods[method].placeholder
+                                            (paymentMethods as any)[method]
+                                                .placeholder
                                         }
                                     />
                                 </div>
@@ -384,7 +385,7 @@ const Index = ({ booking, payment }) => {
                                 <textarea
                                     name="note"
                                     id="note"
-                                    rows="2"
+                                    rows={2}
                                     value={note}
                                     onChange={(e) => setNote(e.target.value)}
                                     className="block w-full resize-none rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-800 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-slate-900"

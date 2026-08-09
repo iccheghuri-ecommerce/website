@@ -1,32 +1,39 @@
-import React from 'react';
-import { useForm, Head, Link } from '@inertiajs/react';
+import { useForm, Head } from '@inertiajs/react';
 import dayjs from 'dayjs';
+import React from 'react';
 
-const money = (n) => `৳${n.toLocaleString('en-BD')}`;
-const fmtDate = (date) => dayjs(date).format('D MMM YYYY');
+const money = (n: number) => `৳${n.toLocaleString('en-BD')}`;
+const fmtDate = (date: string) => dayjs(date).format('D MMM YYYY');
 
-const Index = ({ tour, selection, user }) => {
+const Index = ({
+    tour,
+    selection,
+    user,
+    occupiedSeats = [],
+}: {
+    tour: any;
+    selection: any;
+    user: any;
+    occupiedSeats?: string[];
+}) => {
     // FIXED: Changed field name from 'notes' to 'note' to match backend validation rule
     const { data, setData, post, processing, errors } = useForm({
         note: '',
         adults: selection.adults ?? 0,
         couples: selection.couples ?? 0,
-        children: selection.children ?? 0,
         payment: selection.payment ?? 'full',
         number: user?.number ?? '',
         name: user?.name ?? '',
+        seats: [] as string[],
     });
 
     const hasCouple = tour.couple_price != null;
-    const hasChild = tour.child_price != null;
 
-    const totalPeople =
-        Number(data.adults) + Number(data.couples) * 2 + Number(data.children);
+    const totalPeople = Number(data.adults) + Number(data.couples) * 2;
 
     const totalPrice =
         data.adults * tour.adult_price +
-        (hasCouple ? data.couples * tour.couple_price : 0) +
-        (hasChild ? data.children * tour.child_price : 0);
+        (hasCouple ? data.couples * tour.couple_price : 0);
 
     const payable =
         data.payment === 'full'
@@ -35,7 +42,30 @@ const Index = ({ tour, selection, user }) => {
 
     const dueLater = totalPrice - payable;
 
-    const handleSubmit = (e) => {
+    const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+    const cols = ['1', '2', '3', '4'];
+
+    const handleSeatToggle = (seat: string) => {
+        if (occupiedSeats.includes(seat)) {
+            return;
+        }
+
+        let newSeats = [...data.seats];
+
+        if (newSeats.includes(seat)) {
+            newSeats = newSeats.filter((s) => s !== seat);
+        } else {
+            if (newSeats.length >= totalPeople) {
+                newSeats.shift();
+            }
+
+            newSeats.push(seat);
+        }
+
+        setData('seats', newSeats);
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post(`/tours/${tour.slug}/book`);
     };
@@ -135,6 +165,125 @@ const Index = ({ tour, selection, user }) => {
                             </div>
                         </div>
 
+                        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                            <h2 className="mb-4 text-lg font-semibold text-slate-800">
+                                Select Bus Seats ({data.seats.length} /{' '}
+                                {totalPeople} selected)
+                            </h2>
+                            <div className="mb-6 flex flex-wrap gap-4 text-xs">
+                                <div className="flex items-center gap-1.5">
+                                    <div className="h-4 w-4 rounded border border-slate-300 bg-slate-100"></div>
+                                    <span>Available</span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                    <div className="h-4 w-4 rounded bg-teal-600"></div>
+                                    <span>Selected</span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                    <div className="h-4 w-4 rounded border border-red-200 bg-red-100"></div>
+                                    <span>Occupied</span>
+                                </div>
+                            </div>
+                            <div className="mx-auto max-w-xs rounded-xl border border-slate-200 bg-slate-50 p-4">
+                                <div className="mb-6 flex justify-end">
+                                    <div className="rounded bg-slate-300 px-3 py-1 text-xs font-semibold text-slate-600">
+                                        Driver ☸
+                                    </div>
+                                </div>
+                                <div className="grid gap-3">
+                                    {rows.map((row) => (
+                                        <div
+                                            key={row}
+                                            className="flex items-center justify-between"
+                                        >
+                                            <div className="flex gap-2">
+                                                {cols.slice(0, 2).map((col) => {
+                                                    const seat = `${row}${col}`;
+                                                    const isOccupied =
+                                                        occupiedSeats.includes(
+                                                            seat,
+                                                        );
+                                                    const isSelected =
+                                                        data.seats.includes(
+                                                            seat,
+                                                        );
+
+                                                    return (
+                                                        <button
+                                                            key={seat}
+                                                            type="button"
+                                                            disabled={
+                                                                isOccupied
+                                                            }
+                                                            onClick={() =>
+                                                                handleSeatToggle(
+                                                                    seat,
+                                                                )
+                                                            }
+                                                            className={`flex h-9 w-9 items-center justify-center rounded border text-xs font-semibold transition ${
+                                                                isOccupied
+                                                                    ? 'cursor-not-allowed border-red-200 bg-red-100 text-red-400'
+                                                                    : isSelected
+                                                                      ? 'border-teal-700 bg-teal-600 text-white'
+                                                                      : 'border-slate-200 bg-white text-slate-700 hover:border-teal-500'
+                                                            }`}
+                                                        >
+                                                            {seat}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                            <div className="w-8 text-center text-xs font-bold text-slate-400">
+                                                Row {row}
+                                            </div>
+                                            <div className="flex gap-2">
+                                                {cols.slice(2, 4).map((col) => {
+                                                    const seat = `${row}${col}`;
+                                                    const isOccupied =
+                                                        occupiedSeats.includes(
+                                                            seat,
+                                                        );
+                                                    const isSelected =
+                                                        data.seats.includes(
+                                                            seat,
+                                                        );
+
+                                                    return (
+                                                        <button
+                                                            key={seat}
+                                                            type="button"
+                                                            disabled={
+                                                                isOccupied
+                                                            }
+                                                            onClick={() =>
+                                                                handleSeatToggle(
+                                                                    seat,
+                                                                )
+                                                            }
+                                                            className={`flex h-9 w-9 items-center justify-center rounded border text-xs font-semibold transition ${
+                                                                isOccupied
+                                                                    ? 'cursor-not-allowed border-red-200 bg-red-100 text-red-400'
+                                                                    : isSelected
+                                                                      ? 'border-teal-700 bg-teal-600 text-white'
+                                                                      : 'border-slate-200 bg-white text-slate-700 hover:border-teal-500'
+                                                            }`}
+                                                        >
+                                                            {seat}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            {errors.seats && (
+                                <p className="mt-2 text-xs text-red-600">
+                                    {errors.seats}
+                                </p>
+                            )}
+                        </div>
+
                         {/* Note Box */}
                         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                             <h2 className="mb-2 text-lg font-semibold text-slate-800">
@@ -162,9 +311,9 @@ const Index = ({ tour, selection, user }) => {
                         </div>
 
                         {/* Submission Handling Error Indicator */}
-                        {errors.booking && (
+                        {errors && (errors as any).booking && (
                             <div className="rounded-xl bg-red-50 p-4 text-sm font-medium text-red-600">
-                                ⚠️ {errors.booking}
+                                ⚠️ {(errors as any).booking}
                             </div>
                         )}
 
@@ -224,15 +373,21 @@ const Index = ({ tour, selection, user }) => {
                                         </span>
                                     </div>
                                 )}
-                                {data.children > 0 && (
-                                    <div className="flex justify-between">
-                                        <span>Child × {data.children}</span>
-                                        <span>
-                                            {money(
-                                                data.children *
-                                                    tour.child_price,
-                                            )}
+                                {data.seats && data.seats.length > 0 && (
+                                    <div className="flex flex-col gap-1 border-t border-slate-100 pt-2 text-xs">
+                                        <span className="font-semibold text-slate-500">
+                                            Selected Seats:
                                         </span>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {data.seats.map((seat: string) => (
+                                                <span
+                                                    key={seat}
+                                                    className="rounded bg-teal-50 px-1.5 py-0.5 font-bold text-teal-700"
+                                                >
+                                                    {seat}
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
                                 )}
                             </div>
