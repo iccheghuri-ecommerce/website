@@ -12,6 +12,8 @@ class Tour extends Model
     /** @use HasFactory<TourFactory> */
     use HasFactory;
 
+    protected $guarded = [];
+
     public function scopeFeatured($query)
     {
         return $query->where('is_featured', true);
