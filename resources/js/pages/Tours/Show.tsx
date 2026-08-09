@@ -93,10 +93,15 @@ const Show = ({ tour }: { tour: any }) => {
         0,
     );
 
+    const minBookingPayable =
+        tour.minimum_booking_amount != null
+            ? tour.minimum_booking_amount * totalPeople
+            : totalPrice;
+
     const payable =
         payment === 'full'
             ? totalPrice
-            : Math.min(tour.minimum_booking_amount ?? totalPrice, totalPrice);
+            : Math.min(minBookingPayable, totalPrice);
     const dueLater = totalPrice - payable;
 
     const canSubmit =

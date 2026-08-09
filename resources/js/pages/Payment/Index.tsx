@@ -9,7 +9,13 @@ const Index = ({ booking, payment }: { booking: any; payment: string }) => {
     const paid = booking.paid_amount;
     const due = Math.max(0, total - paid);
     const progressPercentage = Math.min((paid / total) * 100, 100);
-    const minimumBookingAmount = booking.tour.minimum_booking_amount ?? due;
+    const totalTravelers =
+        (booking.adult_count ?? 0) + (booking.couple_count ?? 0) * 2;
+    const minBookingPayable =
+        booking.tour.minimum_booking_amount != null
+            ? booking.tour.minimum_booking_amount * totalTravelers
+            : due;
+    const minimumBookingAmount = minBookingPayable;
 
     let initialAmount = 0;
 
