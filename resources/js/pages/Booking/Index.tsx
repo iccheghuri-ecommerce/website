@@ -44,6 +44,7 @@ const Index = ({
 
     const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
     const cols = ['1', '2', '3', '4'];
+    const lastRowCols = ['1', '2', '3', '4', '5'];
 
     const handleSeatToggle = (seat: string) => {
         if (occupiedSeats.includes(seat)) {
@@ -275,6 +276,43 @@ const Index = ({
                                             </div>
                                         </div>
                                     ))}
+
+                                    {/* Row K with 5 seats (K1, K2, K3, K4, K5) */}
+                                    <div className="flex items-center justify-between border-t border-slate-200 pt-3">
+                                        <div className="flex w-full justify-between gap-1">
+                                            {lastRowCols.map((col) => {
+                                                const seat = `K${col}`;
+                                                const isOccupied =
+                                                    occupiedSeats.includes(
+                                                        seat,
+                                                    );
+                                                const isSelected =
+                                                    data.seats.includes(seat);
+
+                                                return (
+                                                    <button
+                                                        key={seat}
+                                                        type="button"
+                                                        disabled={isOccupied}
+                                                        onClick={() =>
+                                                            handleSeatToggle(
+                                                                seat,
+                                                            )
+                                                        }
+                                                        className={`flex h-9 w-9 items-center justify-center rounded border text-xs font-semibold transition ${
+                                                            isOccupied
+                                                                ? 'cursor-not-allowed border-red-200 bg-red-100 text-red-400'
+                                                                : isSelected
+                                                                  ? 'border-teal-700 bg-teal-600 text-white'
+                                                                  : 'border-slate-200 bg-white text-slate-700 hover:border-teal-500'
+                                                        }`}
+                                                    >
+                                                        {seat}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             {errors.seats && (
