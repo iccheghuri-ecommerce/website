@@ -36,7 +36,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/tours/create', [App\Http\Controllers\Admin\TourController::class, 'create'])->name('tours.create');
     Route::post('/tours', [App\Http\Controllers\Admin\TourController::class, 'store'])->name('tours.store');
     Route::get('/tours/{tour}/edit', [App\Http\Controllers\Admin\TourController::class, 'edit'])->name('tours.edit');
-    Route::post('/tours/{tour}', [App\Http\Controllers\Admin\TourController::class, 'update'])->name('tours.update');
+    Route::put('/tours/{tour}', [App\Http\Controllers\Admin\TourController::class, 'update'])->name('tours.update');
     Route::delete('/tours/{tour}', [App\Http\Controllers\Admin\TourController::class, 'destroy'])->name('tours.destroy');
 
     Route::get('/bookings', [App\Http\Controllers\Admin\BookingController::class, 'index'])->name('bookings.index');
