@@ -9,12 +9,41 @@ use Inertia\Inertia;
 
 class PaymentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $payments = Payment::with(['booking.tour', 'booking.user'])->latest()->paginate(15);
+        $query = Payment::with(['booking.tour', 'booking.user']);
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('transaction_id', 'like', "%{$search}%")
+                    ->orWhere('method', 'like', "%{$search}%")
+                    ->orWhereHas('booking', function ($bq) use ($search) {
+                        $bq->where('booking_code', 'like', "%{$search}%")
+                            ->orWhereHas('user', function ($uq) use ($search) {
+                                $uq->where('name', 'like', "%{$search}%");
+                            });
+                    });
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        $payments = $query->latest()->paginate(15)->withQueryString();
+
+        $stats = [
+            'total_payments' => Payment::count(),
+            'pending_payments' => Payment::where('status', 'pending')->count(),
+            'total_verified_amount' => Payment::where('status', 'verified')->sum('amount'),
+            'total_rejected_amount' => Payment::where('status', 'rejected')->sum('amount'),
+        ];
 
         return Inertia::render('Admin/Payments/Index', [
             'payments' => $payments,
+            'stats' => $stats,
+            'filters' => $request->only(['search', 'status']),
         ]);
     }
 
