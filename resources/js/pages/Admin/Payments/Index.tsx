@@ -1,11 +1,57 @@
 import { Head, router } from '@inertiajs/react';
 import React, { useState } from 'react';
+import {
+    FiTrendingUp,
+    FiAlertTriangle,
+    FiCheckCircle,
+    FiXCircle,
+    FiSearch,
+    FiSliders,
+} from 'react-icons/fi';
 
 const money = (n: number) => `৳${n.toLocaleString('en-BD')}`;
 
-const Index = ({ payments }: { payments: any }) => {
+const Index = ({
+    payments,
+    stats,
+    filters,
+}: {
+    payments: any;
+    stats: any;
+    filters: any;
+}) => {
     const [selectedPayment, setSelectedPayment] = useState<any>(null);
     const [status, setStatus] = useState('');
+    const [searchTerm, setSearchTerm] = useState(filters.search ?? '');
+    const [statusFilter, setStatusFilter] = useState(filters.status ?? '');
+
+    const handleSearchSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        router.get(
+            '/admin/payments',
+            {
+                search: searchTerm,
+                status: statusFilter,
+            },
+            {
+                preserveState: true,
+            },
+        );
+    };
+
+    const handleFilterChange = (val: string) => {
+        setStatusFilter(val);
+        router.get(
+            '/admin/payments',
+            {
+                search: searchTerm,
+                status: val,
+            },
+            {
+                preserveState: true,
+            },
+        );
+    };
 
     const openEditModal = (payment: any) => {
         setSelectedPayment(payment);
@@ -46,6 +92,102 @@ const Index = ({ payments }: { payments: any }) => {
                     </p>
                 </div>
 
+                {/* Stats Section */}
+                <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <div className="rounded-lg bg-teal-50 p-3 text-teal-600">
+                            <FiTrendingUp className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <p className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                                Total Transactions
+                            </p>
+                            <p className="text-2xl font-bold text-slate-800">
+                                {stats.total_payments}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex animate-pulse items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <div className="rounded-lg bg-yellow-50 p-3 text-yellow-600">
+                            <FiAlertTriangle className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <p className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                                Pending Verification
+                            </p>
+                            <p className="text-2xl font-bold text-slate-800">
+                                {stats.pending_payments}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <div className="rounded-lg bg-emerald-50 p-3 text-emerald-600">
+                            <FiCheckCircle className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <p className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                                Total Verified Amount
+                            </p>
+                            <p className="text-2xl font-bold text-slate-800">
+                                {money(stats.total_verified_amount)}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <div className="rounded-lg bg-red-50 p-3 text-red-600">
+                            <FiXCircle className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <p className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                                Total Rejected Amount
+                            </p>
+                            <p className="text-2xl font-bold text-slate-800">
+                                {money(stats.total_rejected_amount)}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Filters */}
+                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <form
+                        onSubmit={handleSearchSubmit}
+                        className="relative flex max-w-md flex-1"
+                    >
+                        <input
+                            type="text"
+                            placeholder="Search Txn ID, method, booking code..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pr-4 pl-10 text-sm text-slate-800 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none"
+                        />
+                        <button
+                            type="submit"
+                            className="absolute top-3 left-3 text-slate-400"
+                        >
+                            <FiSearch className="h-4 w-4" />
+                        </button>
+                    </form>
+
+                    <div className="flex items-center gap-2">
+                        <FiSliders className="h-4 w-4 text-slate-400" />
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => handleFilterChange(e.target.value)}
+                            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-teal-500 focus:outline-none"
+                        >
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="verified">Verified</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+
+                {/* Table */}
                 <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                     <table className="min-w-full divide-y divide-slate-200">
                         <thead className="bg-slate-50">
