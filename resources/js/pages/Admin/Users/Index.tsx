@@ -1,11 +1,57 @@
 import { Head, router } from '@inertiajs/react';
 import React, { useState } from 'react';
+import {
+    FiUsers,
+    FiShield,
+    FiBriefcase,
+    FiPhoneCall,
+    FiSearch,
+    FiSliders,
+} from 'react-icons/fi';
 
-const Index = ({ users }: { users: any }) => {
+const Index = ({
+    users,
+    stats,
+    filters,
+}: {
+    users: any;
+    stats: any;
+    filters: any;
+}) => {
     const [selectedUser, setSelectedUser] = useState<any>(null);
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
+    const [searchTerm, setSearchTerm] = useState(filters.search ?? '');
+    const [roleFilter, setRoleFilter] = useState(filters.role ?? '');
+
+    const handleSearchSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        router.get(
+            '/admin/users',
+            {
+                search: searchTerm,
+                role: roleFilter,
+            },
+            {
+                preserveState: true,
+            },
+        );
+    };
+
+    const handleFilterChange = (val: string) => {
+        setRoleFilter(val);
+        router.get(
+            '/admin/users',
+            {
+                search: searchTerm,
+                role: val,
+            },
+            {
+                preserveState: true,
+            },
+        );
+    };
 
     const openEditModal = (user: any) => {
         setSelectedUser(user);
@@ -18,8 +64,8 @@ const Index = ({ users }: { users: any }) => {
         e.preventDefault();
 
         if (!selectedUser) {
-return;
-}
+            return;
+        }
 
         router.put(
             `/admin/users/${selectedUser.id}`,
@@ -50,6 +96,101 @@ return;
                     </p>
                 </div>
 
+                {/* Stats Section */}
+                <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <div className="rounded-lg bg-teal-50 p-3 text-teal-600">
+                            <FiUsers className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <p className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                                Total Users
+                            </p>
+                            <p className="text-2xl font-bold text-slate-800">
+                                {stats.total_users}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <div className="rounded-lg bg-emerald-50 p-3 text-emerald-600">
+                            <FiShield className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <p className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                                Administrators
+                            </p>
+                            <p className="text-2xl font-bold text-slate-800">
+                                {stats.admins_count}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <div className="rounded-lg bg-blue-50 p-3 text-blue-600">
+                            <FiBriefcase className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <p className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                                Active Bookers
+                            </p>
+                            <p className="text-2xl font-bold text-slate-800">
+                                {stats.active_bookers}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <div className="rounded-lg bg-purple-50 p-3 text-purple-600">
+                            <FiPhoneCall className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <p className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                                Phone Added
+                            </p>
+                            <p className="text-2xl font-bold text-slate-800">
+                                {stats.phone_verified_count}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Filters */}
+                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <form
+                        onSubmit={handleSearchSubmit}
+                        className="relative flex max-w-md flex-1"
+                    >
+                        <input
+                            type="text"
+                            placeholder="Search by name, email, phone..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pr-4 pl-10 text-sm text-slate-800 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none"
+                        />
+                        <button
+                            type="submit"
+                            className="absolute top-3 left-3 text-slate-400"
+                        >
+                            <FiSearch className="h-4 w-4" />
+                        </button>
+                    </form>
+
+                    <div className="flex items-center gap-2">
+                        <FiSliders className="h-4 w-4 text-slate-400" />
+                        <select
+                            value={roleFilter}
+                            onChange={(e) => handleFilterChange(e.target.value)}
+                            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-teal-500 focus:outline-none"
+                        >
+                            <option value="">All Roles</option>
+                            <option value="admin">Administrators</option>
+                            <option value="user">Regular Users</option>
+                        </select>
+                    </div>
+                </div>
+
+                {/* Table */}
                 <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                     <table className="min-w-full divide-y divide-slate-200">
                         <thead className="bg-slate-50">
