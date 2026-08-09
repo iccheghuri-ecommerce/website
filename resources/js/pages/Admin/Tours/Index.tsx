@@ -100,7 +100,7 @@ const Index = ({ tours, stats }: { tours: any; stats: any }) => {
                 </div>
 
                 {/* Table */}
-                <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <div className="overflow-x-auto overflow-y-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                     <table className="min-w-full divide-y divide-slate-200">
                         <thead className="bg-slate-50">
                             <tr>
