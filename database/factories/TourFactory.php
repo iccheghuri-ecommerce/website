@@ -28,7 +28,7 @@ class TourFactory extends Factory
             'booking_ends_at' => now()->addDays(15),
             'departure_at' => now()->addMonth(),
             'return_at' => now()->addMonth()->addDays(5),
-            'total_seats' => 40,
+            'total_seats' => 45,
             'adult_price' => fake()->numberBetween(5000, 25000),
             'couple_price' => fake()->optional()->numberBetween(9000, 45000),
             'minimum_booking_amount' => fake()->optional()->numberBetween(1000, 5000),
