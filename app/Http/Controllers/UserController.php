@@ -39,6 +39,10 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'number' => ['required', 'digits:11'],
+            'nid_no' => ['required', 'string', 'max:255'],
+            'blood_group' => ['required', 'string', 'max:5'],
+            'address' => ['required', 'string', 'max:1000'],
+            'emergency_contact' => ['required', 'string', 'max:255'],
         ]);
 
         $user->update($validated);

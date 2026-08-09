@@ -25,6 +25,15 @@ const Index = ({
         number: user?.number ?? '',
         name: user?.name ?? '',
         seats: [] as string[],
+        travelers: [] as Array<{
+            seat_number: string;
+            name: string;
+            phone: string;
+            nid_no: string;
+            blood_group: string;
+            address: string;
+            emergency_contact: string;
+        }>,
     });
 
     const hasCouple = tour.couple_price != null;
@@ -52,18 +61,40 @@ const Index = ({
         }
 
         let newSeats = [...data.seats];
+        let newTravelers = [...data.travelers];
 
         if (newSeats.includes(seat)) {
             newSeats = newSeats.filter((s) => s !== seat);
+            newTravelers = newTravelers.filter((t) => t.seat_number !== seat);
         } else {
             if (newSeats.length >= totalPeople) {
-                newSeats.shift();
+                const removedSeat = newSeats.shift();
+                newTravelers = newTravelers.filter(
+                    (t) => t.seat_number !== removedSeat,
+                );
             }
 
             newSeats.push(seat);
+            newTravelers.push({
+                seat_number: seat,
+                name: newTravelers.length === 0 ? data.name : '',
+                phone: newTravelers.length === 0 ? data.number : '',
+                nid_no: newTravelers.length === 0 ? user?.nid_no || '' : '',
+                blood_group:
+                    newTravelers.length === 0 ? user?.blood_group || '' : '',
+                address: newTravelers.length === 0 ? user?.address || '' : '',
+                emergency_contact:
+                    newTravelers.length === 0
+                        ? user?.emergency_contact || ''
+                        : '',
+            });
         }
 
-        setData('seats', newSeats);
+        setData((prevData) => ({
+            ...prevData,
+            seats: newSeats,
+            travelers: newTravelers,
+        }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -153,6 +184,7 @@ const Index = ({
                                         </p>
                                     )}
                                 </div>
+
                                 <div className="sm:col-span-2">
                                     <div className="flex items-start gap-2 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2">
                                         <span className="mt-0.5">💡</span>
@@ -347,6 +379,337 @@ const Index = ({
                                 </p>
                             )}
                         </div>
+
+                        {/* Passenger Details Collection Per Selected Seat */}
+                        {data.seats.length > 0 && (
+                            <div className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                                <h2 className="text-lg font-semibold text-slate-800">
+                                    Traveler Information (per seat)
+                                </h2>
+                                {data.seats.map((seat, index) => {
+                                    const traveler = data.travelers.find(
+                                        (t) => t.seat_number === seat,
+                                    ) || {
+                                        seat_number: seat,
+                                        name: '',
+                                        phone: '',
+                                        nid_no: '',
+                                        blood_group: '',
+                                        address: '',
+                                        emergency_contact: '',
+                                    };
+
+                                    const updateTravelerField = (
+                                        field: string,
+                                        val: string,
+                                    ) => {
+                                        const updated = data.travelers.map(
+                                            (t) => {
+                                                if (t.seat_number === seat) {
+                                                    return {
+                                                        ...t,
+                                                        [field]: val,
+                                                    };
+                                                }
+
+                                                return t;
+                                            },
+                                        );
+                                        setData('travelers', updated);
+                                    };
+
+                                    return (
+                                        <div
+                                            key={seat}
+                                            className="border-t border-slate-100 pt-4 first:border-t-0 first:pt-0"
+                                        >
+                                            <div className="mb-3 flex items-center justify-between">
+                                                <h3 className="font-bold text-teal-700">
+                                                    Passenger for Seat {seat}
+                                                </h3>
+                                                {index > 0 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            const primary =
+                                                                data
+                                                                    .travelers[0];
+
+                                                            if (primary) {
+                                                                updateTravelerField(
+                                                                    'name',
+                                                                    primary.name,
+                                                                );
+                                                                updateTravelerField(
+                                                                    'phone',
+                                                                    primary.phone,
+                                                                );
+                                                                updateTravelerField(
+                                                                    'nid_no',
+                                                                    primary.nid_no,
+                                                                );
+                                                                updateTravelerField(
+                                                                    'blood_group',
+                                                                    primary.blood_group,
+                                                                );
+                                                                updateTravelerField(
+                                                                    'address',
+                                                                    primary.address,
+                                                                );
+                                                                updateTravelerField(
+                                                                    'emergency_contact',
+                                                                    primary.emergency_contact,
+                                                                );
+                                                            }
+                                                        }}
+                                                        className="text-xs font-semibold text-teal-600 hover:text-teal-700"
+                                                    >
+                                                        Copy from Primary
+                                                        Traveler
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                                <div>
+                                                    <label className="block text-xs font-medium text-slate-500">
+                                                        Name
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={traveler.name}
+                                                        onChange={(e) =>
+                                                            updateTravelerField(
+                                                                'name',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        className={`mt-1 block w-full rounded-lg border px-3 py-2 text-sm text-slate-800 transition focus:ring-1 focus:outline-none ${
+                                                            errors[
+                                                                `travelers.${index}.name` as any
+                                                            ]
+                                                                ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
+                                                                : 'border-slate-300 focus:border-teal-500 focus:ring-teal-500'
+                                                        }`}
+                                                        placeholder="Traveler name"
+                                                        required
+                                                    />
+                                                    {errors[
+                                                        `travelers.${index}.name` as any
+                                                    ] && (
+                                                        <p className="mt-1 text-xs text-red-600">
+                                                            {
+                                                                (errors as any)[
+                                                                    `travelers.${index}.name`
+                                                                ]
+                                                            }
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs font-medium text-slate-500">
+                                                        Phone
+                                                    </label>
+                                                    <input
+                                                        type="tel"
+                                                        maxLength={11}
+                                                        value={traveler.phone}
+                                                        onChange={(e) =>
+                                                            updateTravelerField(
+                                                                'phone',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        className={`mt-1 block w-full rounded-lg border px-3 py-2 text-sm text-slate-800 transition focus:ring-1 focus:outline-none ${
+                                                            errors[
+                                                                `travelers.${index}.phone` as any
+                                                            ]
+                                                                ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
+                                                                : 'border-slate-300 focus:border-teal-500 focus:ring-teal-500'
+                                                        }`}
+                                                        placeholder="Phone number"
+                                                        required
+                                                    />
+                                                    {errors[
+                                                        `travelers.${index}.phone` as any
+                                                    ] && (
+                                                        <p className="mt-1 text-xs text-red-600">
+                                                            {
+                                                                (errors as any)[
+                                                                    `travelers.${index}.phone`
+                                                                ]
+                                                            }
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs font-medium text-slate-500">
+                                                        NID Number
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={traveler.nid_no}
+                                                        onChange={(e) =>
+                                                            updateTravelerField(
+                                                                'nid_no',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        className={`mt-1 block w-full rounded-lg border px-3 py-2 text-sm text-slate-800 transition focus:ring-1 focus:outline-none ${
+                                                            errors[
+                                                                `travelers.${index}.nid_no` as any
+                                                            ]
+                                                                ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
+                                                                : 'border-slate-300 focus:border-teal-500 focus:ring-teal-500'
+                                                        }`}
+                                                        placeholder="NID"
+                                                        required
+                                                    />
+                                                    {errors[
+                                                        `travelers.${index}.nid_no` as any
+                                                    ] && (
+                                                        <p className="mt-1 text-xs text-red-600">
+                                                            {
+                                                                (errors as any)[
+                                                                    `travelers.${index}.nid_no`
+                                                                ]
+                                                            }
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs font-medium text-slate-500">
+                                                        Blood Group
+                                                    </label>
+                                                    <select
+                                                        value={
+                                                            traveler.blood_group
+                                                        }
+                                                        onChange={(e) =>
+                                                            updateTravelerField(
+                                                                'blood_group',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        className={`mt-1 block w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 transition focus:ring-1 focus:outline-none ${
+                                                            errors[
+                                                                `travelers.${index}.blood_group` as any
+                                                            ]
+                                                                ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
+                                                                : 'border-slate-300 focus:border-teal-500 focus:ring-teal-500'
+                                                        }`}
+                                                        required
+                                                    >
+                                                        <option value="">
+                                                            Select Blood Group
+                                                        </option>
+                                                        {[
+                                                            'A+',
+                                                            'A-',
+                                                            'B+',
+                                                            'B-',
+                                                            'AB+',
+                                                            'AB-',
+                                                            'O+',
+                                                            'O-',
+                                                        ].map((bg) => (
+                                                            <option
+                                                                key={bg}
+                                                                value={bg}
+                                                            >
+                                                                {bg}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    {errors[
+                                                        `travelers.${index}.blood_group` as any
+                                                    ] && (
+                                                        <p className="mt-1 text-xs text-red-600">
+                                                            {
+                                                                (errors as any)[
+                                                                    `travelers.${index}.blood_group`
+                                                                ]
+                                                            }
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs font-medium text-slate-500">
+                                                        Emergency Contact
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={
+                                                            traveler.emergency_contact
+                                                        }
+                                                        onChange={(e) =>
+                                                            updateTravelerField(
+                                                                'emergency_contact',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        className={`mt-1 block w-full rounded-lg border px-3 py-2 text-sm text-slate-800 transition focus:ring-1 focus:outline-none ${
+                                                            errors[
+                                                                `travelers.${index}.emergency_contact` as any
+                                                            ]
+                                                                ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
+                                                                : 'border-slate-300 focus:border-teal-500 focus:ring-teal-500'
+                                                        }`}
+                                                        placeholder="Emergency contact"
+                                                        required
+                                                    />
+                                                    {errors[
+                                                        `travelers.${index}.emergency_contact` as any
+                                                    ] && (
+                                                        <p className="mt-1 text-xs text-red-600">
+                                                            {
+                                                                (errors as any)[
+                                                                    `travelers.${index}.emergency_contact`
+                                                                ]
+                                                            }
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div className="sm:col-span-2">
+                                                    <label className="block text-xs font-medium text-slate-500">
+                                                        Address
+                                                    </label>
+                                                    <textarea
+                                                        rows={2}
+                                                        value={traveler.address}
+                                                        onChange={(e) =>
+                                                            updateTravelerField(
+                                                                'address',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        className={`mt-1 block w-full rounded-lg border px-3 py-2 text-sm text-slate-800 transition focus:ring-1 focus:outline-none ${
+                                                            errors[
+                                                                `travelers.${index}.address` as any
+                                                            ]
+                                                                ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
+                                                                : 'border-slate-300 focus:border-teal-500 focus:ring-teal-500'
+                                                        }`}
+                                                        placeholder="Address"
+                                                        required
+                                                    />
+                                                    {errors[
+                                                        `travelers.${index}.address` as any
+                                                    ] && (
+                                                        <p className="mt-1 text-xs text-red-600">
+                                                            {
+                                                                (errors as any)[
+                                                                    `travelers.${index}.address`
+                                                                ]
+                                                            }
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
 
                         {/* Submission Handling Error Indicator */}
                         {errors && (errors as any).booking && (

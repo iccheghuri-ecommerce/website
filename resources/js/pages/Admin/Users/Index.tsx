@@ -21,6 +21,10 @@ const Index = ({
     const [selectedUser, setSelectedUser] = useState<any>(null);
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
+    const [nidNo, setNidNo] = useState('');
+    const [bloodGroup, setBloodGroup] = useState('');
+    const [address, setAddress] = useState('');
+    const [emergencyContact, setEmergencyContact] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
     const [searchTerm, setSearchTerm] = useState(filters.search ?? '');
     const [roleFilter, setRoleFilter] = useState(filters.role ?? '');
@@ -57,6 +61,10 @@ const Index = ({
         setSelectedUser(user);
         setName(user.name);
         setNumber(user.number ?? '');
+        setNidNo(user.nid_no ?? '');
+        setBloodGroup(user.blood_group ?? '');
+        setAddress(user.address ?? '');
+        setEmergencyContact(user.emergency_contact ?? '');
         setIsAdmin(!!user.is_admin);
     };
 
@@ -72,6 +80,10 @@ const Index = ({
             {
                 name,
                 number,
+                nid_no: nidNo,
+                blood_group: bloodGroup,
+                address,
+                emergency_contact: emergencyContact,
                 is_admin: isAdmin,
             },
             {
@@ -282,6 +294,77 @@ const Index = ({
                                         value={number}
                                         onChange={(e) =>
                                             setNumber(e.target.value)
+                                        }
+                                        className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-teal-500 focus:outline-none"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700">
+                                        NID Number
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={nidNo}
+                                        onChange={(e) =>
+                                            setNidNo(e.target.value)
+                                        }
+                                        className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-teal-500 focus:outline-none"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700">
+                                        Blood Group
+                                    </label>
+                                    <select
+                                        value={bloodGroup}
+                                        onChange={(e) =>
+                                            setBloodGroup(e.target.value)
+                                        }
+                                        className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-teal-500 focus:outline-none"
+                                    >
+                                        <option value="">Not selected</option>
+                                        {[
+                                            'A+',
+                                            'A-',
+                                            'B+',
+                                            'B-',
+                                            'AB+',
+                                            'AB-',
+                                            'O+',
+                                            'O-',
+                                        ].map((bg) => (
+                                            <option key={bg} value={bg}>
+                                                {bg}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700">
+                                        Emergency Contact
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={emergencyContact}
+                                        onChange={(e) =>
+                                            setEmergencyContact(e.target.value)
+                                        }
+                                        className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-teal-500 focus:outline-none"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700">
+                                        Address
+                                    </label>
+                                    <textarea
+                                        rows={2}
+                                        value={address}
+                                        onChange={(e) =>
+                                            setAddress(e.target.value)
                                         }
                                         className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:border-teal-500 focus:outline-none"
                                     />

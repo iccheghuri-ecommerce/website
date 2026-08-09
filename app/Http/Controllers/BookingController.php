@@ -65,7 +65,15 @@ class BookingController extends Controller
             'number' => ['required', 'digits:11'],
             'name' => ['required', 'string', 'max:255'],
             'seats' => ['required', 'array', 'min:1'],
-            'seats.*' => ['required', 'string', 'regex:/^[A-J][1-4]$/'],
+            'seats.*' => ['required', 'string', 'regex:/^[A-K][1-5]$/'],
+            'travelers' => ['required', 'array', 'min:1'],
+            'travelers.*.seat_number' => ['required', 'string', 'regex:/^[A-K][1-5]$/'],
+            'travelers.*.name' => ['required', 'string', 'max:255'],
+            'travelers.*.phone' => ['required', 'digits:11'],
+            'travelers.*.nid_no' => ['required', 'string', 'max:255'],
+            'travelers.*.blood_group' => ['required', 'string', 'max:5'],
+            'travelers.*.address' => ['required', 'string', 'max:1000'],
+            'travelers.*.emergency_contact' => ['required', 'string', 'max:255'],
         ]);
 
         $adultsCount = $data['adults'];
@@ -136,7 +144,7 @@ class BookingController extends Controller
                     throw new \Exception('Some selected seats were already booked while you were checking out: '.implode(', ', $alreadyTaken));
                 }
 
-                return Booking::create([
+                $booking = Booking::create([
                     'tour_id' => $tour->id,
                     'user_id' => Auth::id(),
                     'booking_code' => strtoupper(Str::random(10)),
@@ -152,6 +160,20 @@ class BookingController extends Controller
 
                     'note' => $data['note'] ?? null,
                 ]);
+
+                foreach ($data['travelers'] as $travelerData) {
+                    $booking->travelers()->create([
+                        'seat_number' => $travelerData['seat_number'],
+                        'name' => $travelerData['name'],
+                        'phone' => $travelerData['phone'],
+                        'nid_no' => $travelerData['nid_no'] ?? null,
+                        'blood_group' => $travelerData['blood_group'] ?? null,
+                        'address' => $travelerData['address'] ?? null,
+                        'emergency_contact' => $travelerData['emergency_contact'] ?? null,
+                    ]);
+                }
+
+                return $booking;
             });
         } catch (\Exception $e) {
             return back()->withErrors([
@@ -159,10 +181,23 @@ class BookingController extends Controller
             ]);
         }
 
-        $user->update([
-            'number' => $data['number'],
-            'name' => $data['name'],
-        ]);
+        // Update user profile using the primary traveler details (first seat)
+        $primaryTraveler = $data['travelers'][0] ?? null;
+        if ($primaryTraveler) {
+            $user->update([
+                'number' => $data['number'],
+                'name' => $data['name'],
+                'nid_no' => $primaryTraveler['nid_no'] ?? $user->nid_no,
+                'blood_group' => $primaryTraveler['blood_group'] ?? $user->blood_group,
+                'address' => $primaryTraveler['address'] ?? $user->address,
+                'emergency_contact' => $primaryTraveler['emergency_contact'] ?? $user->emergency_contact,
+            ]);
+        } else {
+            $user->update([
+                'number' => $data['number'],
+                'name' => $data['name'],
+            ]);
+        }
 
         return redirect("/bookings/{$booking->booking_code}/pay?payment={$data['payment']}");
     }

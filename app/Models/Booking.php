@@ -14,6 +14,11 @@ class Booking extends Model
         'seats' => 'array',
     ];
 
+    public function travelers()
+    {
+        return $this->hasMany(Traveler::class);
+    }
+
     /**
      * @return BelongsTo<Tour, $this>
      */

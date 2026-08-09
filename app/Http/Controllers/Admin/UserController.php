@@ -52,6 +52,10 @@ class UserController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'number' => 'nullable|string|max:20',
+            'nid_no' => 'nullable|string|max:255',
+            'blood_group' => 'nullable|string|max:5',
+            'address' => 'nullable|string|max:1000',
+            'emergency_contact' => 'nullable|string|max:255',
             'is_admin' => 'required|boolean',
         ]);
 

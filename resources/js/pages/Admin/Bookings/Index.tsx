@@ -386,6 +386,73 @@ const Index = ({
 
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700">
+                                        Travelers Info
+                                    </label>
+                                    <div className="mt-1 max-h-48 space-y-2 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                        {selectedBooking.travelers &&
+                                        selectedBooking.travelers.length > 0 ? (
+                                            selectedBooking.travelers.map(
+                                                (traveler: any) => (
+                                                    <div
+                                                        key={traveler.id}
+                                                        className="border-b border-slate-200 pb-2 text-xs text-slate-700 last:border-b-0 last:pb-0"
+                                                    >
+                                                        <p className="font-bold text-teal-800">
+                                                            Seat{' '}
+                                                            {
+                                                                traveler.seat_number
+                                                            }
+                                                            : {traveler.name}
+                                                        </p>
+                                                        <p>
+                                                            Phone:{' '}
+                                                            {traveler.phone}
+                                                        </p>
+                                                        {traveler.nid_no && (
+                                                            <p>
+                                                                NID:{' '}
+                                                                {
+                                                                    traveler.nid_no
+                                                                }
+                                                            </p>
+                                                        )}
+                                                        {traveler.blood_group && (
+                                                            <p>
+                                                                Blood:{' '}
+                                                                {
+                                                                    traveler.blood_group
+                                                                }
+                                                            </p>
+                                                        )}
+                                                        {traveler.address && (
+                                                            <p>
+                                                                Address:{' '}
+                                                                {
+                                                                    traveler.address
+                                                                }
+                                                            </p>
+                                                        )}
+                                                        {traveler.emergency_contact && (
+                                                            <p>
+                                                                Emergency:{' '}
+                                                                {
+                                                                    traveler.emergency_contact
+                                                                }
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                ),
+                                            )
+                                        ) : (
+                                            <span className="text-sm text-slate-500">
+                                                No travelers details
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700">
                                         Admin Note
                                     </label>
                                     <textarea
