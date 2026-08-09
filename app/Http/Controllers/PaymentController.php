@@ -35,7 +35,11 @@ class PaymentController extends Controller
         $totalAmount = $booking->total_amount;
         $paidAmount = $booking->paid_amount;
         $due = $totalAmount - $paidAmount;
-        $minimumBookingAmount = $booking->tour->minimum_booking_amount ?? $due;
+        $totalTravelers = ($booking->adult_count ?? 0) + ($booking->couple_count ?? 0) * 2;
+        $minBookingPayable = $booking->tour->minimum_booking_amount != null
+            ? $booking->tour->minimum_booking_amount * totalTravelers
+            : $due;
+        $minimumBookingAmount = $minBookingPayable;
 
         $minAllowed = min($minimumBookingAmount, $due);
 

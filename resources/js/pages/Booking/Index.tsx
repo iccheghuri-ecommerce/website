@@ -44,10 +44,15 @@ const Index = ({
         data.adults * tour.adult_price +
         (hasCouple ? data.couples * tour.couple_price : 0);
 
+    const minBookingPayable =
+        tour.minimum_booking_amount != null
+            ? tour.minimum_booking_amount * totalPeople
+            : totalPrice;
+
     const payable =
         data.payment === 'full'
             ? totalPrice
-            : Math.min(tour.minimum_booking_amount ?? totalPrice, totalPrice);
+            : Math.min(minBookingPayable, totalPrice);
 
     const dueLater = totalPrice - payable;
 
