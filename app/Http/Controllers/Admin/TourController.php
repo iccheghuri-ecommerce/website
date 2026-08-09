@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 use App\Models\Tour;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -14,8 +15,20 @@ class TourController extends Controller
     {
         $tours = Tour::latest()->paginate(10);
 
+        $stats = [
+            'total_tours' => Tour::count(),
+            'active_tours' => Tour::active()->count(),
+            'total_seats_booked' => Booking::where('status', 'active')->get()->sum(function ($b) {
+                return count($b->seats ?? []);
+            }),
+            'total_potential_revenue' => Tour::active()->get()->sum(function ($t) {
+                return $t->booked_seats * $t->adult_price;
+            }),
+        ];
+
         return Inertia::render('Admin/Tours/Index', [
             'tours' => $tours,
+            'stats' => $stats,
         ]);
     }
 
