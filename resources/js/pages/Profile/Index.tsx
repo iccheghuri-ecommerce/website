@@ -15,6 +15,10 @@ const Index = ({
     const { data, setData, patch, processing, errors } = useForm({
         name: user.name || '',
         number: user.number || '',
+        nid_no: user.nid_no || '',
+        blood_group: user.blood_group || '',
+        address: user.address || '',
+        emergency_contact: user.emergency_contact || '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -89,7 +93,11 @@ const Index = ({
                                     onChange={(e) =>
                                         setData('name', e.target.value)
                                     }
-                                    className="mt-1.5 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+                                    className={`mt-1.5 block w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-1 focus:outline-none sm:text-sm ${
+                                        errors.name
+                                            ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
+                                            : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
+                                    }`}
                                 />
                                 {errors.name && (
                                     <div className="mt-1 text-xs font-medium text-red-500">
@@ -122,11 +130,132 @@ const Index = ({
                                         setData('number', e.target.value)
                                     }
                                     placeholder="Not provided"
-                                    className="mt-1.5 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none sm:text-sm"
+                                    className={`mt-1.5 block w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-1 focus:outline-none sm:text-sm ${
+                                        errors.number
+                                            ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
+                                            : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
+                                    }`}
                                 />
                                 {errors.number && (
                                     <div className="mt-1 text-xs font-medium text-red-500">
                                         {errors.number}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* NID Input */}
+                            <div>
+                                <label className="block text-xs font-semibold tracking-wide text-gray-400 uppercase">
+                                    NID Number
+                                </label>
+                                <input
+                                    type="text"
+                                    value={data.nid_no}
+                                    onChange={(e) =>
+                                        setData('nid_no', e.target.value)
+                                    }
+                                    placeholder="Not provided"
+                                    className={`mt-1.5 block w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-1 focus:outline-none sm:text-sm ${
+                                        errors.nid_no
+                                            ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
+                                            : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
+                                    }`}
+                                />
+                                {errors.nid_no && (
+                                    <div className="mt-1 text-xs font-medium text-red-500">
+                                        {errors.nid_no}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Blood Group Select */}
+                            <div>
+                                <label className="block text-xs font-semibold tracking-wide text-gray-400 uppercase">
+                                    Blood Group
+                                </label>
+                                <select
+                                    value={data.blood_group}
+                                    onChange={(e) =>
+                                        setData('blood_group', e.target.value)
+                                    }
+                                    className={`mt-1.5 block w-full rounded-lg border bg-white px-3 py-2 shadow-sm focus:ring-1 focus:outline-none sm:text-sm ${
+                                        errors.blood_group
+                                            ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
+                                            : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
+                                    }`}
+                                >
+                                    <option value="">Not selected</option>
+                                    {[
+                                        'A+',
+                                        'A-',
+                                        'B+',
+                                        'B-',
+                                        'AB+',
+                                        'AB-',
+                                        'O+',
+                                        'O-',
+                                    ].map((bg) => (
+                                        <option key={bg} value={bg}>
+                                            {bg}
+                                        </option>
+                                    ))}
+                                </select>
+                                {errors.blood_group && (
+                                    <div className="mt-1 text-xs font-medium text-red-500">
+                                        {errors.blood_group}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Emergency Contact Input */}
+                            <div>
+                                <label className="block text-xs font-semibold tracking-wide text-gray-400 uppercase">
+                                    Emergency Contact
+                                </label>
+                                <input
+                                    type="text"
+                                    value={data.emergency_contact}
+                                    onChange={(e) =>
+                                        setData(
+                                            'emergency_contact',
+                                            e.target.value,
+                                        )
+                                    }
+                                    placeholder="Not provided"
+                                    className={`mt-1.5 block w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-1 focus:outline-none sm:text-sm ${
+                                        errors.emergency_contact
+                                            ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
+                                            : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
+                                    }`}
+                                />
+                                {errors.emergency_contact && (
+                                    <div className="mt-1 text-xs font-medium text-red-500">
+                                        {errors.emergency_contact}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Address Input */}
+                            <div className="sm:col-span-3">
+                                <label className="block text-xs font-semibold tracking-wide text-gray-400 uppercase">
+                                    Address
+                                </label>
+                                <textarea
+                                    rows={2}
+                                    value={data.address}
+                                    onChange={(e) =>
+                                        setData('address', e.target.value)
+                                    }
+                                    placeholder="Not provided"
+                                    className={`mt-1.5 block w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-1 focus:outline-none sm:text-sm ${
+                                        errors.address
+                                            ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500'
+                                            : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
+                                    }`}
+                                />
+                                {errors.address && (
+                                    <div className="mt-1 text-xs font-medium text-red-500">
+                                        {errors.address}
                                     </div>
                                 )}
                             </div>

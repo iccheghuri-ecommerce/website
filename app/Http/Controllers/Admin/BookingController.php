@@ -11,7 +11,7 @@ class BookingController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Booking::with(['tour', 'user']);
+        $query = Booking::with(['tour', 'user', 'travelers']);
 
         if ($request->filled('search')) {
             $search = $request->input('search');

@@ -22,7 +22,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'google_id', 'number', 'is_admin', 'email_verified_at'])]
+#[Fillable(['name', 'email', 'password', 'google_id', 'number', 'is_admin', 'email_verified_at', 'nid_no', 'blood_group', 'address', 'emergency_contact'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
