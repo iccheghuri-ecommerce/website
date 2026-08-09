@@ -60,7 +60,7 @@ class TourController extends Controller
         }
 
         $data['slug'] = Str::slug($data['title']).'-'.Str::random(5);
-        $data['total_seats'] = 40; // Fixed seats as per requirements
+        $data['total_seats'] = 45; // Fixed seats as per requirements
 
         Tour::create($data);
 
